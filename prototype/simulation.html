@@ -8,6 +8,13 @@
   </head>
 
   <body class="min-h-screen bg-slate-50 text-slate-900">
+    <!-- auth guard (prototype) -->
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") {
+        window.location.href = "./login.html";
+      }
+    </script>
+
     <!-- Top bar -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
       <div class="mx-auto max-w-[1400px] px-6 py-4 flex items-center justify-between">
@@ -15,7 +22,12 @@
           <span aria-hidden="true">←</span>
           戻る
         </a>
-        <div class="text-sm text-slate-500">プロトタイプ：シミュレーション画面</div>
+
+        <div class="flex items-center gap-3">
+          <a href="./results.html" class="font-semibold text-slate-700 hover:underline">受験結果</a>
+          <a href="./admin.html" class="font-semibold text-slate-700 hover:underline">管理画面</a>
+          <button class="font-semibold text-slate-700 hover:underline" onclick="logout()">ログアウト</button>
+        </div>
       </div>
     </header>
 
@@ -61,7 +73,7 @@
                 <button
                   class="h-10 w-10 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center"
                   title="ホーム"
-                  onclick="alert('プロトタイプ：ホーム（ダミー）')"
+                  onclick="window.location.href='./index.html'"
                 >
                   <svg viewBox="0 0 24 24" class="h-5 w-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" />
@@ -71,7 +83,7 @@
 
               <div class="mt-5 space-y-3 text-blue-700 font-bold">
                 <a href="#" onclick="alert('プロトタイプ：シミュレーション設定（ダミー）')" class="block hover:underline">シミュレーション設定</a>
-                <a href="#" onclick="alert('プロトタイプ：ガイダンスメッセージ（ダミー）')" class="block hover:underline">ガイダンスメッセージ</a>
+                <a href="#" onclick="scrollToGuide()" class="block hover:underline">ガイダンスメッセージ</a>
               </div>
             </div>
           </section>
@@ -166,9 +178,9 @@
           </div>
 
           <!-- Scroll area -->
-          <div class="px-7 py-6 space-y-6 max-h-[560px] overflow-auto">
+          <div id="chatScroll" class="px-7 py-6 space-y-6 max-h-[560px] overflow-auto">
             <!-- Guidance message box -->
-            <div class="rounded-2xl border border-blue-200 bg-blue-50/70 p-5">
+            <div id="guideBox" class="rounded-2xl border border-blue-200 bg-blue-50/70 p-5">
               <div class="flex items-start gap-3">
                 <div class="h-10 w-10 rounded-xl bg-blue-600/10 flex items-center justify-center border border-blue-200">
                   <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
@@ -291,13 +303,13 @@
                   投稿
                 </button>
 
-                <a
-                  href="#"
-                  onclick="alert('プロトタイプ：提出画面へ移動（ダミー）')"
+                <!-- ここは「結果詳細」へ飛ばす導線にしています（デモデータがあれば最新へ） -->
+                <button
                   class="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-4"
+                  onclick="goLatestDetail()"
                 >
                   提出画面へ移動
-                </a>
+                </button>
               </div>
             </div>
 
@@ -310,6 +322,21 @@
     </main>
 
     <script>
+      function logout() {
+        localStorage.removeItem("aas_logged_in");
+        localStorage.removeItem("aas_user_email");
+        localStorage.removeItem("aas_remember");
+        window.location.href = "./login.html";
+      }
+
+      function scrollToGuide() {
+        const sc = document.getElementById("chatScroll");
+        const box = document.getElementById("guideBox");
+        if (!sc || !box) return;
+        sc.scrollTo({ top: box.offsetTop - 12, behavior: "smooth" });
+      }
+
+      // composer logic
       const ta = document.getElementById("msg");
       const count = document.getElementById("count");
       const postBtn = document.getElementById("postBtn");
@@ -340,6 +367,31 @@
       });
 
       update();
+
+      // go to latest result detail (if available), else to results list
+      function goLatestDetail() {
+        const raw = localStorage.getItem("aas_results");
+        if (!raw) {
+          window.location.href = "./results.html";
+          return;
+        }
+        try {
+          const arr = JSON.parse(raw);
+          if (!Array.isArray(arr) || arr.length === 0) {
+            window.location.href = "./results.html";
+            return;
+          }
+          arr.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+          const id = arr[0].id;
+          if (id) {
+            window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
+          } else {
+            window.location.href = "./results.html";
+          }
+        } catch {
+          window.location.href = "./results.html";
+        }
+      }
     </script>
   </body>
 </html>
