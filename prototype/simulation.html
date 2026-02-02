@@ -23,7 +23,8 @@
           戻る
         </a>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
+          <!-- ✅ 受験結果 → prototype/results.html -->
           <a href="./results.html" class="font-semibold text-slate-700 hover:underline">受験結果</a>
           <a href="./admin.html" class="font-semibold text-slate-700 hover:underline">管理画面</a>
           <button class="font-semibold text-slate-700 hover:underline" onclick="logout()">ログアウト</button>
@@ -32,7 +33,6 @@
     </header>
 
     <main class="mx-auto max-w-[1400px] px-6 py-6">
-      <!-- ✅ Left = sidebar, Right = main -->
       <div class="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6">
         <!-- LEFT: side panels -->
         <aside class="space-y-6">
@@ -50,7 +50,7 @@
                   </div>
                   <div class="mt-2 text-sm text-amber-700/90">残り時間が少なくなっています。</div>
                 </div>
-                <div class="text-3xl font-extrabold text-amber-700">3分</div>
+                <div class="text-3xl font-extrabold text-amber-700" id="remainText">3分</div>
               </div>
             </div>
           </section>
@@ -67,7 +67,7 @@
                       <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                   </div>
-                  <div class="text-lg font-extrabold">マナビDX QUEST（ケース3）</div>
+                  <div class="text-lg font-extrabold" id="caseTitle">マナビDX QUEST（ケース3）</div>
                 </div>
 
                 <button
@@ -94,7 +94,6 @@
               <div class="text-lg font-extrabold">登場人物</div>
               <div class="mt-3 text-sm text-slate-500">外部</div>
 
-              <!-- Character card: selected -->
               <button
                 class="mt-4 w-full text-left rounded-2xl border-2 border-blue-500 bg-blue-50/30 p-5 hover:bg-blue-50 transition"
                 onclick="alert('プロトタイプ：個人営業部課長（詳細ダミー）')"
@@ -118,7 +117,6 @@
                 </div>
               </button>
 
-              <!-- Character card: A -->
               <button
                 class="mt-4 w-full text-left rounded-2xl border border-slate-200 bg-slate-50/60 p-5 hover:bg-slate-50 transition"
                 onclick="alert('プロトタイプ：ベテラン販売員A（詳細ダミー）')"
@@ -142,7 +140,6 @@
                 </div>
               </button>
 
-              <!-- Character card: B -->
               <button
                 class="mt-4 w-full text-left rounded-2xl border border-slate-200 bg-slate-50/60 p-5 hover:bg-slate-50 transition"
                 onclick="alert('プロトタイプ：ベテラン販売員B（詳細ダミー）')"
@@ -177,9 +174,7 @@
             </h1>
           </div>
 
-          <!-- Scroll area -->
           <div id="chatScroll" class="px-7 py-6 space-y-6 max-h-[560px] overflow-auto">
-            <!-- Guidance message box -->
             <div id="guideBox" class="rounded-2xl border border-blue-200 bg-blue-50/70 p-5">
               <div class="flex items-start gap-3">
                 <div class="h-10 w-10 rounded-xl bg-blue-600/10 flex items-center justify-center border border-blue-200">
@@ -208,13 +203,11 @@
               </div>
             </div>
 
-            <!-- Status line -->
             <div class="flex items-center gap-3 text-slate-700">
               <div class="h-10 w-10 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold">個</div>
               <div class="font-semibold">個人営業部課長さんとやり取り中です</div>
             </div>
 
-            <!-- Chat: agent -->
             <div class="flex items-start gap-4">
               <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
                 <span class="text-slate-700 font-bold">個</span>
@@ -233,7 +226,6 @@
               </div>
             </div>
 
-            <!-- Chat: user -->
             <div class="flex items-start gap-4 justify-end">
               <div class="flex-1 max-w-[680px]">
                 <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
@@ -252,7 +244,6 @@
               </div>
             </div>
 
-            <!-- Chat: agent -->
             <div class="flex items-start gap-4">
               <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
                 <span class="text-slate-700 font-bold">個</span>
@@ -272,7 +263,6 @@
             </div>
           </div>
 
-          <!-- Composer -->
           <div class="px-7 py-6 border-t border-slate-200 bg-white">
             <div class="relative">
               <textarea
@@ -303,10 +293,9 @@
                   投稿
                 </button>
 
-                <!-- ここは「結果詳細」へ飛ばす導線にしています（デモデータがあれば最新へ） -->
                 <button
                   class="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-4"
-                  onclick="goLatestDetail()"
+                  onclick="window.location.href='./results.html'"
                 >
                   提出画面へ移動
                 </button>
@@ -335,6 +324,12 @@
         if (!sc || !box) return;
         sc.scrollTo({ top: box.offsetTop - 12, behavior: "smooth" });
       }
+
+      // title by query param
+      const u = new URL(window.location.href);
+      const c = u.searchParams.get("case") || "3";
+      const t = document.getElementById("caseTitle");
+      if (t) t.textContent = `マナビDX QUEST（ケース${c}）`;
 
       // composer logic
       const ta = document.getElementById("msg");
@@ -367,31 +362,6 @@
       });
 
       update();
-
-      // go to latest result detail (if available), else to results list
-      function goLatestDetail() {
-        const raw = localStorage.getItem("aas_results");
-        if (!raw) {
-          window.location.href = "./results.html";
-          return;
-        }
-        try {
-          const arr = JSON.parse(raw);
-          if (!Array.isArray(arr) || arr.length === 0) {
-            window.location.href = "./results.html";
-            return;
-          }
-          arr.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
-          const id = arr[0].id;
-          if (id) {
-            window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
-          } else {
-            window.location.href = "./results.html";
-          }
-        } catch {
-          window.location.href = "./results.html";
-        }
-      }
     </script>
   </body>
 </html>
