@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>評価結果詳細 - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <!-- auth guard (prototype) -->
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") {
+        window.location.href = "./login.html";
+      }
+    </script>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </div>
+          <div class="text-2xl font-extrabold tracking-tight">シミュレーション結果</div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="./results.html"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50"
+          >
+            ← 一覧へ
+          </a>
+          <a
+            href="./simulation.html"
+            class="rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-extrabold px-4 py-2 inline-flex items-center gap-2"
+          >
+            ← シミュレーションに戻る
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
+        <!-- Left: final post -->
+        <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-200">
+            <div class="flex items-center gap-2 text-lg font-extrabold">
+              <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2 11 13" />
+                <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+              </svg>
+              あなたの最終投稿
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div class="rounded-2xl border border-blue-200 bg-blue-50/60 p-5">
+              <p id="finalPost" class="whitespace-pre-wrap leading-relaxed text-slate-800"></p>
+            </div>
+
+            <div class="mt-4 text-sm text-slate-500">
+              投稿日時: <span id="submittedAt">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: AI evaluation -->
+        <aside class="space-y-6">
+          <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center gap-2 text-lg font-extrabold">
+                <div class="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                </div>
+                AIからの総合評価
+              </div>
+
+              <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5 flex items-center justify-between gap-4">
+                <div>
+                  <div class="text-sm text-slate-600 font-bold">総合スコア</div>
+                  <div class="mt-1 flex items-baseline gap-2">
+                    <div id="overall" class="text-5xl font-extrabold text-emerald-600">-</div>
+                    <div class="text-slate-600 font-bold">/ 100</div>
+                  </div>
+                </div>
+
+                <div class="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" class="h-8 w-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2 7 6v6c0 5 5 10 5 10s5-5 5-10V6l-5-4Z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center gap-2 text-lg font-extrabold">
+                <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19V5" />
+                  <path d="M4 19h16" />
+                  <path d="M6 15l4-6 4 3 4-7" />
+                </svg>
+                項目別評価
+              </div>
+
+              <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                <!-- Radar (SVG) -->
+                <div class="flex items-center justify-center">
+                  <svg id="radar" width="320" height="260" viewBox="0 0 320 260"></svg>
+                </div>
+              </div>
+
+              <div id="axisCards" class="mt-6 space-y-5"></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "aas_results";
+
+      function loadAll() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }
+      function getId() {
+        const u = new URL(window.location.href);
+        return u.searchParams.get("id");
+      }
+      function fmt(dt) {
+        const d = new Date(dt);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+        return `${y}/${m}/${day} ${hh}:${mm}:${ss}`;
+      }
+
+      function radarDraw(svg, axes) {
+        // 4軸想定（必要なら拡張可）
+        const labels = axes.map((a) => a.label);
+        const values = axes.map((a) => Math.max(0, Math.min(100, a.score)));
+
+        const cx = 160, cy = 120;
+        const r = 90;
+        const levels = [25, 50, 75, 100];
+
+        const n = labels.length;
+        const angle0 = -Math.PI / 2;
+
+        function pt(i, rr) {
+          const ang = angle0 + (2 * Math.PI * i) / n;
+          return [cx + rr * Math.cos(ang), cy + rr * Math.sin(ang)];
+        }
+
+        const ns = "http://www.w3.org/2000/svg";
+        svg.innerHTML = "";
+
+        // grid polygons
+        levels.forEach((lv) => {
+          const rr = (r * lv) / 100;
+          const poly = document.createElementNS(ns, "polygon");
+          const pts = Array.from({ length: n }, (_, i) => pt(i, rr).join(",")).join(" ");
+          poly.setAttribute("points", pts);
+          poly.setAttribute("fill", "none");
+          poly.setAttribute("stroke", "#E5E7EB");
+          poly.setAttribute("stroke-width", "1");
+          svg.appendChild(poly);
+        });
+
+        // axes lines + labels
+        for (let i = 0; i < n; i++) {
+          const [x, y] = pt(i, r);
+          const line = document.createElementNS(ns, "line");
+          line.setAttribute("x1", cx);
+          line.setAttribute("y1", cy);
+          line.setAttribute("x2", x);
+          line.setAttribute("y2", y);
+          line.setAttribute("stroke", "#E5E7EB");
+          line.setAttribute("stroke-width", "1");
+          svg.appendChild(line);
+
+          const tx = cx + (r + 18) * Math.cos(angle0 + (2 * Math.PI * i) / n);
+          const ty = cy + (r + 18) * Math.sin(angle0 + (2 * Math.PI * i) / n);
+
+          const text = document.createElementNS(ns, "text");
+          text.textContent = labels[i];
+          text.setAttribute("x", tx);
+          text.setAttribute("y", ty);
+          text.setAttribute("fill", "#64748B");
+          text.setAttribute("font-size", "11");
+          text.setAttribute("font-weight", "700");
+          text.setAttribute("text-anchor", tx < cx ? "end" : "start");
+          text.setAttribute("dominant-baseline", ty < cy ? "auto" : "hanging");
+          svg.appendChild(text);
+        }
+
+        // value polygon
+        const valPoly = document.createElementNS(ns, "polygon");
+        const valPts = values
+          .map((v, i) => {
+            const rr = (r * v) / 100;
+            return pt(i, rr).join(",");
+          })
+          .join(" ");
+        valPoly.setAttribute("points", valPts);
+        valPoly.setAttribute("fill", "rgba(37, 99, 235, 0.18)");
+        valPoly.setAttribute("stroke", "#2563EB");
+        valPoly.setAttribute("stroke-width", "2");
+        svg.appendChild(valPoly);
+      }
+
+      function axisCard(a) {
+        const score = Math.max(0, Math.min(100, a.score));
+        const bar = score;
+        const wBadge =
+          `<span class="ml-2 inline-flex items-center rounded-lg bg-amber-50 border border-amber-100 px-2 py-1 text-xs font-extrabold text-amber-700">重み×${a.weight}</span>`;
+
+        return `
+          <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="font-extrabold">${a.label}${wBadge}</div>
+              <div class="text-lg font-extrabold text-slate-800">${score} <span class="text-slate-500 text-sm font-bold">/ 100</span></div>
+            </div>
+
+            <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+              <div class="h-full bg-rose-500" style="width:${bar}%"></div>
+            </div>
+
+            <div class="mt-3 text-sm text-slate-600 font-bold">
+              ${a.hint || "評価コメント（プロトタイプ）"}
+            </div>
+
+            <div class="mt-2 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+              ${a.comment || "ここに評価の詳細コメントが入ります。"}
+            </div>
+          </div>
+        `;
+      }
+
+      function main() {
+        const id = getId();
+        const all = loadAll();
+        const item = all.find((x) => x.id === id) || all[0];
+
+        if (!item) {
+          alert("結果が見つかりません（デモデータが未生成の可能性があります）。");
+          window.location.href = "./results.html";
+          return;
+        }
+
+        document.getElementById("finalPost").textContent = item.finalPost || "-";
+        document.getElementById("submittedAt").textContent = item.submittedAt ? fmt(item.submittedAt) : "-";
+        document.getElementById("overall").textContent = String(item.overall ?? 0);
+
+        // enrich demo comments if missing
+        const axes = (item.axes || []).map((a) => ({
+          ...a,
+          hint:
+            a.hint ||
+            (a.label === "AI活用の目的"
+              ? "経営戦略に基づいたAI導入の真の意図を把握できているか"
+              : a.label === "現状・課題"
+              ? "現場の具体的なボトルネック（工数、バイアス、過去の失敗）の解像度"
+              : a.label === "予測対象"
+              ? "誰を／いつ／何を予測するか、運用を想定できているか"
+              : "実証実験におけるデータ境界線、制約事項、ステークホルダーの特定"),
+          comment:
+            a.comment ||
+            "（プロトタイプ）このエリアに詳細コメントが入ります。長文でも読みやすいように枠内スクロールにせず、カードを縦に積む構成にしています。",
+        }));
+
+        radarDraw(document.getElementById("radar"), axes);
+
+        document.getElementById("axisCards").innerHTML = axes.map(axisCard).join("");
+      }
+
+      main();
+    </script>
+  </body>
+</html>
