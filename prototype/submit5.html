@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>最終投稿（チェックリスト） - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-[#EEF3FF] text-slate-900">
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") window.location.href = "./login.html";
+    </script>
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-[1200px] px-6 py-5 flex items-center justify-between">
+        <div>
+          <div class="text-2xl font-extrabold tracking-tight">最終投稿</div>
+          <div class="text-sm text-slate-500">チェックリストで書き漏れを防ぎます</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700 hover:bg-slate-50" onclick="history.back()">← 戻る</button>
+          <a class="rounded-xl bg-slate-700 px-4 py-3 text-white font-bold hover:bg-slate-800" href="./results.html">受験結果へ</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1200px] px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
+        <!-- MAIN -->
+        <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-8">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-xl font-extrabold">最終提案</h2>
+                <p class="mt-2 text-slate-600 text-sm">右のチェックが全て埋まると提出できます。</p>
+              </div>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="insertTemplate()">
+                テンプレ挿入
+              </button>
+            </div>
+
+            <div class="mt-5 relative">
+              <textarea
+                id="finalText"
+                class="w-full min-h-[520px] rounded-2xl border border-slate-200 bg-white p-5 pr-24 outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="目的→課題→提案→効果→PoC→次アクション、の順で書くと通りやすいです。"
+                maxlength="8000"
+              ></textarea>
+              <div class="absolute right-5 bottom-4 text-sm text-slate-400 font-semibold">
+                <span id="count">0</span> / 8000
+              </div>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500 text-center">
+              ※プロトタイプ：提出はローカル保存（localStorage）で擬似的に行います。
+            </p>
+          </div>
+        </section>
+
+        <!-- CHECKLIST -->
+        <aside class="space-y-4">
+          <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-extrabold">チェックリスト</div>
+                <div class="text-sm font-extrabold text-slate-700"><span id="done">0</span>/<span id="total">6</span></div>
+              </div>
+
+              <div class="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                <div id="bar" class="h-full bg-blue-600" style="width:0%"></div>
+              </div>
+
+              <ul id="list" class="mt-4 space-y-2 text-sm"></ul>
+
+              <button
+                id="submitBtn"
+                class="mt-5 w-full rounded-xl bg-slate-300 px-4 py-3 text-white font-extrabold cursor-not-allowed"
+                disabled
+                onclick="submitFinal()"
+              >
+                提出する
+              </button>
+
+              <div class="mt-3 text-xs text-slate-500">
+                ※簡易判定（キーワード/見出し）です。必要なら調整できます。
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div class="font-extrabold">ヒント</div>
+            <ul class="mt-2 list-disc pl-5 space-y-1">
+              <li>見出し（【目的】など）を入れるとチェックが通りやすいです</li>
+              <li>「誰を/いつ/何を」や「期間/対象」を具体化すると評価が上がりやすいです</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <script>
+      const RESULTS_KEY = "aas_results";
+
+      const tpl = `【目的】
+- 
+
+【現状・課題】
+- 
+
+【提案】
+- 
+
+【期待効果（KPI）】
+- 
+
+【PoC（範囲・期間・評価）】
+- 
+
+【次アクション】
+- `;
+
+      const finalText = document.getElementById("finalText");
+      const count = document.getElementById("count");
+      const list = document.getElementById("list");
+      const doneEl = document.getElementById("done");
+      const totalEl = document.getElementById("total");
+      const bar = document.getElementById("bar");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const checks = [
+        { id: "purpose", label: "目的が書かれている", test: (t) => hasAny(t, ["目的", "ゴール", "狙い"]) },
+        { id: "issue", label: "現状・課題が書かれている", test: (t) => hasAny(t, ["現状", "課題", "問題", "属人", "ブレ"]) },
+        { id: "proposal", label: "提案（何をどう変えるか）がある", test: (t) => hasAny(t, ["提案", "実施", "導入", "予測", "確率"]) },
+        { id: "kpi", label: "期待効果（KPI/定量）がある", test: (t) => hasAny(t, ["KPI", "期待効果", "成約", "空振り", "取りこぼし", "%"]) },
+        { id: "poc", label: "PoC（範囲・期間・評価）がある", test: (t) => hasAny(t, ["PoC", "検証", "期間", "支店", "評価", "リーク"]) },
+        { id: "next", label: "次アクション（誰が・いつまでに）がある", test: (t) => hasAny(t, ["次アクション", "担当", "期限", "合意", "データ抽出"]) },
+      ];
+
+      totalEl.textContent = String(checks.length);
+
+      function hasAny(text, arr) {
+        return arr.some((k) => text.includes(k));
+      }
+
+      function insertTemplate() {
+        const cur = finalText.value.trim();
+        finalText.value = cur ? cur + "\n\n" + tpl : tpl;
+        finalText.focus();
+        update();
+      }
+      window.insertTemplate = insertTemplate;
+
+      function update() {
+        count.textContent = String(finalText.value.length);
+        const t = finalText.value;
+
+        const states = checks.map((c) => ({ ...c, ok: c.test(t) }));
+        const done = states.filter((s) => s.ok).length;
+
+        doneEl.textContent = String(done);
+        bar.style.width = `${Math.round((done / states.length) * 100)}%`;
+
+        list.innerHTML = states
+          .map(
+            (s) => `
+              <li class="flex items-center justify-between gap-3 rounded-xl border ${s.ok ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-white"} px-3 py-2">
+                <span class="font-semibold ${s.ok ? "text-emerald-700" : "text-slate-700"}">${s.ok ? "✓" : "•"} ${s.label}</span>
+                <span class="text-xs ${s.ok ? "text-emerald-700" : "text-slate-400"}">${s.ok ? "OK" : "未"}</span>
+              </li>
+            `
+          )
+          .join("");
+
+        const canSubmit = done === states.length && finalText.value.trim().length > 0;
+        submitBtn.disabled = !canSubmit;
+        submitBtn.className =
+          "mt-5 w-full rounded-xl px-4 py-3 font-extrabold " +
+          (canSubmit ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-slate-300 text-white cursor-not-allowed");
+      }
+
+      finalText.addEventListener("input", update);
+      update();
+
+      function submitFinal() {
+        const text = finalText.value.trim();
+        if (!text) return;
+
+        let arr = [];
+        try {
+          arr = JSON.parse(localStorage.getItem(RESULTS_KEY) || "[]");
+          if (!Array.isArray(arr)) arr = [];
+        } catch {
+          arr = [];
+        }
+
+        const id = Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+        const now = new Date().toISOString();
+
+        arr.unshift({
+          id,
+          scenario: "マナビDX QUEST（ケース3）",
+          case: "ケース3",
+          status: "提出済",
+          submittedAt: now,
+          finalPost: text,
+          overall: 60,
+        });
+
+        localStorage.setItem(RESULTS_KEY, JSON.stringify(arr));
+        window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
+      }
+      window.submitFinal = submitFinal;
+    </script>
+  </body>
+</html>
