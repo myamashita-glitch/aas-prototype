@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-slate-900">
+  <body class="min-h-screen bg-[#EEF3FF] text-slate-900">
     <!-- auth guard (prototype) -->
     <script>
       if (localStorage.getItem("aas_logged_in") !== "1") {
@@ -15,112 +15,113 @@
       }
     </script>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
-      <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-[1400px] px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="h-9 w-9 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.4">
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </div>
-          <div class="text-2xl font-extrabold tracking-tight">シミュレーション結果</div>
+          <div class="text-lg font-extrabold tracking-tight">シミュレーション結果</div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <a
-            href="./results.html"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50"
-          >
-            ← 一覧へ
-          </a>
-          <a
-            href="./simulation.html"
-            class="rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-extrabold px-4 py-2 inline-flex items-center gap-2"
-          >
-            ← シミュレーションに戻る
-          </a>
-        </div>
+        <button
+          class="inline-flex items-center gap-2 rounded-xl bg-slate-700 px-5 py-3 text-white font-bold shadow hover:bg-slate-800 active:translate-y-[1px] transition"
+          onclick="goBackToSimulation()"
+        >
+          <span aria-hidden="true">←</span>
+          シミュレーションに戻る
+        </button>
       </div>
     </header>
 
-    <main class="mx-auto max-w-6xl px-6 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
-        <!-- Left: final post -->
+    <main class="mx-auto max-w-[1400px] px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_520px] gap-6 items-start">
+        <!-- LEFT: 最終投稿 -->
         <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-          <div class="px-6 py-5 border-b border-slate-200">
-            <div class="flex items-center gap-2 text-lg font-extrabold">
-              <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 2 11 13" />
-                <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
-              </svg>
-              あなたの最終投稿
-            </div>
-          </div>
-
-          <div class="p-6">
-            <div class="rounded-2xl border border-blue-200 bg-blue-50/60 p-5">
-              <p id="finalPost" class="whitespace-pre-wrap leading-relaxed text-slate-800"></p>
+          <div class="px-7 py-6">
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 2 11 13" />
+                  <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+                </svg>
+              </div>
+              <h2 class="text-xl font-extrabold">あなたの最終投稿</h2>
             </div>
 
-            <div class="mt-4 text-sm text-slate-500">
-              投稿日時: <span id="submittedAt">-</span>
+            <div class="mt-5 rounded-2xl border border-blue-200 bg-blue-50/60 p-6">
+              <p id="finalPost" class="whitespace-pre-wrap leading-relaxed text-slate-800">
+                読み込み中…
+              </p>
+            </div>
+
+            <div class="mt-5 text-sm text-slate-500">
+              <span class="font-semibold text-slate-600">投稿日時:</span>
+              <span id="submittedAt">—</span>
             </div>
           </div>
         </section>
 
-        <!-- Right: AI evaluation -->
+        <!-- RIGHT: 評価 -->
         <aside class="space-y-6">
+          <!-- 総合評価 -->
           <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-6">
-              <div class="flex items-center gap-2 text-lg font-extrabold">
-                <div class="h-10 w-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="px-7 py-6">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
                 </div>
-                AIからの総合評価
+                <h3 class="text-xl font-extrabold">AIからの総合評価</h3>
               </div>
 
-              <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5 flex items-center justify-between gap-4">
+              <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 flex items-center justify-between gap-6">
                 <div>
-                  <div class="text-sm text-slate-600 font-bold">総合スコア</div>
-                  <div class="mt-1 flex items-baseline gap-2">
-                    <div id="overall" class="text-5xl font-extrabold text-emerald-600">-</div>
-                    <div class="text-slate-600 font-bold">/ 100</div>
+                  <div class="text-sm text-slate-500 font-semibold">総合スコア</div>
+                  <div class="mt-2 flex items-baseline gap-2">
+                    <div id="overallScore" class="text-5xl font-extrabold text-emerald-600">—</div>
+                    <div class="text-slate-500 font-bold">/ 100</div>
                   </div>
                 </div>
 
-                <div class="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" class="h-8 w-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2 7 6v6c0 5 5 10 5 10s5-5 5-10V6l-5-4Z" />
+                <!-- medal -->
+                <div class="h-16 w-16 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" class="h-9 w-9 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a7 7 0 0 0 0 14 7 7 0 0 0 0-14Z" />
+                    <path d="M8 14 6 22l6-3 6 3-2-8" />
                   </svg>
                 </div>
               </div>
             </div>
           </section>
 
+          <!-- レーダーチャート -->
           <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-6">
-              <div class="flex items-center gap-2 text-lg font-extrabold">
-                <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 19V5" />
-                  <path d="M4 19h16" />
-                  <path d="M6 15l4-6 4 3 4-7" />
-                </svg>
-                項目別評価
+            <div class="px-7 py-6">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19V5" />
+                    <path d="M4 19h16" />
+                    <path d="M6 15l4-6 4 3 4-7" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-extrabold">項目別評価</h3>
               </div>
 
-              <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                <!-- Radar (SVG) -->
-                <div class="flex items-center justify-center">
-                  <svg id="radar" width="320" height="260" viewBox="0 0 320 260"></svg>
+              <div class="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+                <div class="relative mx-auto w-full max-w-[420px]">
+                  <canvas id="radar" width="420" height="320" class="w-full h-auto"></canvas>
                 </div>
               </div>
-
-              <div id="axisCards" class="mt-6 space-y-5"></div>
             </div>
           </section>
+
+          <!-- 項目別コメント（縦に並ぶ） -->
+          <section id="detailList" class="space-y-6"></section>
         </aside>
       </div>
     </main>
@@ -128,16 +129,9 @@
     <script>
       const STORAGE_KEY = "aas_results";
 
-      function loadAll() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      }
-      function getId() {
-        const u = new URL(window.location.href);
-        return u.searchParams.get("id");
-      }
-      function fmt(dt) {
-        const d = new Date(dt);
+      function fmtJP(dtLike) {
+        const d = new Date(dtLike);
+        if (Number.isNaN(d.getTime())) return "—";
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, "0");
         const day = String(d.getDate()).padStart(2, "0");
@@ -147,146 +141,251 @@
         return `${y}/${m}/${day} ${hh}:${mm}:${ss}`;
       }
 
-      function radarDraw(svg, axes) {
-        // 4軸想定（必要なら拡張可）
-        const labels = axes.map((a) => a.label);
-        const values = axes.map((a) => Math.max(0, Math.min(100, a.score)));
+      function uid() {
+        return Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+      }
 
-        const cx = 160, cy = 120;
-        const r = 90;
-        const levels = [25, 50, 75, 100];
+      function ensureDemoResults() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return;
 
-        const n = labels.length;
-        const angle0 = -Math.PI / 2;
+        const demo = [
+          {
+            id: uid(),
+            scenario: "マナビDX QUEST（ケース3）",
+            submittedAt: "2026-02-02T16:36:59+09:00",
+            finalPost:
+              "まずベテランだと、「毎年ボーナス時期に必ず何かしら投資の相談がある人」とか、「過去に何度か乗換提案に応じてくれている人」は、今年も動く可能性が高いと見て、かなり上位に持ってきます。一方で若手だと、「残高が大きい人」や「直近で購入から時間が経っている人」みたいに、割と分かりやすい数字ベースで優先度を付けがちですね。",
+            overall: 12,
+            rubric: {
+              "AI活用の目的": { score: 5, weight: 3 },
+              "現状・課題": { score: 35, weight: 5 },
+              "予測対象": { score: 10, weight: 3 },
+              "PoCの検証目的・範囲": { score: 0, weight: 4 },
+            },
+          },
+        ];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(demo));
+      }
 
-        function pt(i, rr) {
-          const ang = angle0 + (2 * Math.PI * i) / n;
-          return [cx + rr * Math.cos(ang), cy + rr * Math.sin(ang)];
+      function loadResults() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function getResultById(id) {
+        const arr = loadResults();
+        return arr.find((x) => x.id === id) || null;
+      }
+
+      function fallbackResult() {
+        // demo から先頭を使う
+        const arr = loadResults();
+        return arr[0] || null;
+      }
+
+      function goBackToSimulation() {
+        // 直近のケース情報を持っていたら戻す（なければ simulation.html）
+        const u = new URL(window.location.href);
+        const from = u.searchParams.get("from");
+        if (from) {
+          window.location.href = from;
+          return;
+        }
+        window.location.href = "./simulation.html";
+      }
+
+      // ---------- Radar chart (canvas) ----------
+      function drawRadar(canvas, labels, values) {
+        // values: 0-100
+        const ctx = canvas.getContext("2d");
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2 + 10;
+        const radius = Math.min(w, h) * 0.32;
+        const levels = 4; // 25/50/75/100
+
+        // background grid
+        ctx.strokeStyle = "rgba(100,116,139,0.25)"; // slate
+        ctx.lineWidth = 1;
+
+        for (let lv = 1; lv <= levels; lv++) {
+          const r = (radius * lv) / levels;
+          ctx.beginPath();
+          for (let i = 0; i < labels.length; i++) {
+            const ang = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+            const x = cx + r * Math.cos(ang);
+            const y = cy + r * Math.sin(ang);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.stroke();
         }
 
-        const ns = "http://www.w3.org/2000/svg";
-        svg.innerHTML = "";
+        // axes + labels
+        ctx.fillStyle = "rgba(71,85,105,0.85)";
+        ctx.font = "12px system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
 
-        // grid polygons
-        levels.forEach((lv) => {
-          const rr = (r * lv) / 100;
-          const poly = document.createElementNS(ns, "polygon");
-          const pts = Array.from({ length: n }, (_, i) => pt(i, rr).join(",")).join(" ");
-          poly.setAttribute("points", pts);
-          poly.setAttribute("fill", "none");
-          poly.setAttribute("stroke", "#E5E7EB");
-          poly.setAttribute("stroke-width", "1");
-          svg.appendChild(poly);
-        });
+        for (let i = 0; i < labels.length; i++) {
+          const ang = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+          const x = cx + radius * Math.cos(ang);
+          const y = cy + radius * Math.sin(ang);
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(x, y);
+          ctx.stroke();
 
-        // axes lines + labels
-        for (let i = 0; i < n; i++) {
-          const [x, y] = pt(i, r);
-          const line = document.createElementNS(ns, "line");
-          line.setAttribute("x1", cx);
-          line.setAttribute("y1", cy);
-          line.setAttribute("x2", x);
-          line.setAttribute("y2", y);
-          line.setAttribute("stroke", "#E5E7EB");
-          line.setAttribute("stroke-width", "1");
-          svg.appendChild(line);
-
-          const tx = cx + (r + 18) * Math.cos(angle0 + (2 * Math.PI * i) / n);
-          const ty = cy + (r + 18) * Math.sin(angle0 + (2 * Math.PI * i) / n);
-
-          const text = document.createElementNS(ns, "text");
-          text.textContent = labels[i];
-          text.setAttribute("x", tx);
-          text.setAttribute("y", ty);
-          text.setAttribute("fill", "#64748B");
-          text.setAttribute("font-size", "11");
-          text.setAttribute("font-weight", "700");
-          text.setAttribute("text-anchor", tx < cx ? "end" : "start");
-          text.setAttribute("dominant-baseline", ty < cy ? "auto" : "hanging");
-          svg.appendChild(text);
+          const lx = cx + (radius + 26) * Math.cos(ang);
+          const ly = cy + (radius + 26) * Math.sin(ang);
+          const text = labels[i];
+          const tw = ctx.measureText(text).width;
+          ctx.fillText(text, lx - tw / 2, ly + 4);
         }
 
         // value polygon
-        const valPoly = document.createElementNS(ns, "polygon");
-        const valPts = values
-          .map((v, i) => {
-            const rr = (r * v) / 100;
-            return pt(i, rr).join(",");
-          })
-          .join(" ");
-        valPoly.setAttribute("points", valPts);
-        valPoly.setAttribute("fill", "rgba(37, 99, 235, 0.18)");
-        valPoly.setAttribute("stroke", "#2563EB");
-        valPoly.setAttribute("stroke-width", "2");
-        svg.appendChild(valPoly);
+        const pts = values.map((v, i) => {
+          const r = (radius * Math.max(0, Math.min(100, v))) / 100;
+          const ang = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+          return { x: cx + r * Math.cos(ang), y: cy + r * Math.sin(ang) };
+        });
+
+        ctx.beginPath();
+        pts.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+        ctx.closePath();
+
+        ctx.fillStyle = "rgba(59,130,246,0.22)"; // blue fill
+        ctx.strokeStyle = "rgba(59,130,246,0.9)";
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        // points
+        ctx.fillStyle = "rgba(59,130,246,1)";
+        pts.forEach((p) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
       }
 
-      function axisCard(a) {
-        const score = Math.max(0, Math.min(100, a.score));
-        const bar = score;
-        const wBadge =
-          `<span class="ml-2 inline-flex items-center rounded-lg bg-amber-50 border border-amber-100 px-2 py-1 text-xs font-extrabold text-amber-700">重み×${a.weight}</span>`;
-
+      // ---------- Detail cards ----------
+      function progressBar(score) {
+        const pct = Math.max(0, Math.min(100, score));
         return `
-          <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-            <div class="flex items-center justify-between gap-3">
-              <div class="font-extrabold">${a.label}${wBadge}</div>
-              <div class="text-lg font-extrabold text-slate-800">${score} <span class="text-slate-500 text-sm font-bold">/ 100</span></div>
-            </div>
-
-            <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
-              <div class="h-full bg-rose-500" style="width:${bar}%"></div>
-            </div>
-
-            <div class="mt-3 text-sm text-slate-600 font-bold">
-              ${a.hint || "評価コメント（プロトタイプ）"}
-            </div>
-
-            <div class="mt-2 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-              ${a.comment || "ここに評価の詳細コメントが入ります。"}
-            </div>
+          <div class="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+            <div class="h-full bg-rose-500" style="width:${pct}%"></div>
           </div>
         `;
       }
 
-      function main() {
-        const id = getId();
-        const all = loadAll();
-        const item = all.find((x) => x.id === id) || all[0];
+      function makeDetailCard(title, weight, score, text) {
+        return `
+          <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+            <div class="px-7 py-6">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <div class="text-lg font-extrabold">${title}</div>
+                    <span class="inline-flex items-center rounded-md bg-amber-50 border border-amber-100 px-2 py-1 text-xs font-extrabold text-amber-700">
+                      重み×${weight}
+                    </span>
+                  </div>
+                </div>
+                <div class="text-lg font-extrabold">${score} <span class="text-sm text-slate-400 font-bold">/ 100</span></div>
+              </div>
 
-        if (!item) {
-          alert("結果が見つかりません（デモデータが未生成の可能性があります）。");
-          window.location.href = "./results.html";
-          return;
-        }
+              ${progressBar(score)}
 
-        document.getElementById("finalPost").textContent = item.finalPost || "-";
-        document.getElementById("submittedAt").textContent = item.submittedAt ? fmt(item.submittedAt) : "-";
-        document.getElementById("overall").textContent = String(item.overall ?? 0);
+              <div class="mt-3 text-sm text-slate-500">
+                ${title === "現状・課題" ? "現場の具体的なボトルネック（工数、バイアス、過去の失敗）の解像度。" :
+                   title === "AI活用の目的" ? "経営戦略に基づいたAI導入の真の意図（残高重視への転換等）を把握できているか" :
+                   title === "予測対象" ? "誰を／いつのタイミングで／何を予測するか（購入・売却、翌月・翌々月など）の具体性。" :
+                   "実証実験におけるデータの境界線、制約事項、ステークホルダーの特定。"}
+              </div>
 
-        // enrich demo comments if missing
-        const axes = (item.axes || []).map((a) => ({
-          ...a,
-          hint:
-            a.hint ||
-            (a.label === "AI活用の目的"
-              ? "経営戦略に基づいたAI導入の真の意図を把握できているか"
-              : a.label === "現状・課題"
-              ? "現場の具体的なボトルネック（工数、バイアス、過去の失敗）の解像度"
-              : a.label === "予測対象"
-              ? "誰を／いつ／何を予測するか、運用を想定できているか"
-              : "実証実験におけるデータ境界線、制約事項、ステークホルダーの特定"),
-          comment:
-            a.comment ||
-            "（プロトタイプ）このエリアに詳細コメントが入ります。長文でも読みやすいように枠内スクロールにせず、カードを縦に積む構成にしています。",
-        }));
-
-        radarDraw(document.getElementById("radar"), axes);
-
-        document.getElementById("axisCards").innerHTML = axes.map(axisCard).join("");
+              <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-5 text-sm leading-relaxed text-slate-800">
+                ${text}
+              </div>
+            </div>
+          </section>
+        `;
       }
 
-      main();
+      function defaultFeedback(title) {
+        if (title === "AI活用の目的") {
+          return `今回の提出内容では、「ベテラン／若手が今どのようなロジックで顧客を選んでいるか」は書かれていますが、<b>「なぜAIを入れるのか」</b>（経営としてどんな営業スタイル・ビジネスモデルに変えたいのか）といった上位目的には触れられていません。<br><br>
+          まずは営業部課長やFD推進室長に、早い段階でオープンクエスチョンを投げて確認してください。<br>
+          例：「今回のAI導入で、単に訪問リスト作成を効率化したいだけでしょうか。それとも長期的にどんな営業スタイルに変えていきたい、という狙いがありますか？」<br><br>
+          目的が曖昧なままだと、AIが現状のバイアスをそのまま再現するだけになりやすいです。`;
+        }
+        if (title === "現状・課題") {
+          return `「ベテランはボーナス期に動きやすい人・乗換提案に応じやすい人を上位にする」「若手は残高が大きい人や購入から時間が経っている人など、数字ベースで優先度を付けがち」という観察は良いです。これは、担当者の経験や見やすい指標に依存した<b>経験則ベース＋バイアスのある選別</b>になっている、という課題のヒントになります。<br><br>
+          一方で、次のような重要情報がまだ取れていません：<br>
+          ・月次の訪問計画作成にどれくらい時間・工数がかかっているか（定量負荷）<br>
+          ・そのロジックによってどの程度「取りこぼし」「空振り」が発生していると感じているか<br>
+          ・若手が数字ベースになりがちな背景（スキル不足／指導方針／評価指標の影響など根本原因）<br><br>
+          次は「うまくいかなかったケース」「取りこぼしの具体例」を掘り下げる質問を用意すると、AIに期待される役割がはっきりします。`;
+        }
+        if (title === "予測対象") {
+          return `現時点では「動きやすさ」「残高」などの要素が挙がっていますが、<b>誰を／いつ／何を予測するか</b>がまだ粗いです。<br><br>
+          次のように粒度を揃えて定義してみてください：<br>
+          ・対象：既存顧客／休眠顧客／新規見込み どれか<br>
+          ・イベント：購入／売却／乗換相談／来店 など<br>
+          ・予測窓：翌月／翌々月／四半期 など<br>
+          ・運用：確率上位N件を訪問候補にする／閾値を超えたら提案する など<br><br>
+          この定義が固まると、必要データ（取引、提案履歴、来店、キャンペーン接触等）も連動して整理できます。`;
+        }
+        // PoC
+        return `提出内容からは、「どの期間のデータを使うか」「対面取引に絞るのか」「PoCとしてどの支店／どの販売員を対象にするか」といった検証範囲の情報が不足しています。<br><br>
+        PoCでは、最初に境界線を決めるのが重要です：<br>
+        ・期間：直近24ヶ月／36ヶ月など（制度変更やキャンペーンの影響も確認）<br>
+        ・対象：支店の選定理由（地域特性／顧客層／体制）<br>
+        ・評価：取りこぼし／空振りのどちらを重視するか、現場の受容性（説明可能性）<br>
+        ・リーク：未来情報の混入（後知恵）をどう防ぐか（分割方法）<br><br>
+        まずは「PoCの成功条件」を合意し、次に「対象範囲」「制約事項」「関係者」を確定させましょう。`;
+      }
+
+      // ---------- boot ----------
+      ensureDemoResults();
+
+      const url = new URL(window.location.href);
+      const id = url.searchParams.get("id");
+      let item = id ? getResultById(id) : null;
+      if (!item) item = fallbackResult();
+
+      // UI set
+      document.getElementById("finalPost").textContent = item?.finalPost || "（最終投稿がありません）";
+      document.getElementById("submittedAt").textContent = fmtJP(item?.submittedAt);
+      document.getElementById("overallScore").textContent = String(item?.overall ?? 0);
+
+      // rubric normalize
+      const labels = ["AI活用の目的", "現状・課題", "予測対象", "PoCの検証目的・範囲"];
+      const rubric = item?.rubric || {};
+      const values = labels.map((k) => (rubric[k]?.score ?? 0));
+      const weights = labels.map((k) => (rubric[k]?.weight ?? 3));
+
+      // radar draw
+      const canvas = document.getElementById("radar");
+      drawRadar(canvas, labels, values);
+
+      // detail list
+      const detailHost = document.getElementById("detailList");
+      detailHost.innerHTML = labels
+        .map((k, idx) => {
+          const score = values[idx];
+          const w = weights[idx];
+          const feedback = rubric[k]?.feedback || defaultFeedback(k);
+          return makeDetailCard(k, w, score, feedback);
+        })
+        .join("");
     </script>
   </body>
 </html>
