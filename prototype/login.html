@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <main class="min-h-screen flex">
+      <!-- Left (visual) -->
+      <section class="hidden lg:flex w-1/2 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600"></div>
+        <div class="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10"></div>
+        <div class="absolute right-10 top-14 h-56 w-56 rounded-full bg-white/10"></div>
+        <div class="absolute -right-24 bottom-[-60px] h-96 w-96 rounded-full bg-white/10"></div>
+
+        <div class="relative z-10 p-12 text-white flex flex-col justify-between w-full">
+          <div>
+            <div class="text-2xl font-extrabold tracking-tight">
+              SIGNATE AI Agent Simulation
+            </div>
+            <div class="mt-2 text-white/85">
+              AIを活用した実践的なビジネスシミュレーションを体験
+            </div>
+          </div>
+
+          <div class="max-w-md">
+            <div class="text-3xl font-extrabold leading-tight">
+              仕事の“会話”を、<br />そのままトレーニングに。
+            </div>
+            <div class="mt-4 text-white/85 leading-relaxed">
+              課題に合わせたシミュレーションを選び、ヒアリングから要件整理までを短時間で体験できます。
+            </div>
+          </div>
+
+          <div class="text-white/70 text-sm">
+            Prototype UI / No real authentication
+          </div>
+        </div>
+      </section>
+
+      <!-- Right (form) -->
+      <section class="w-full lg:w-1/2 flex items-center justify-center p-6">
+        <div class="w-full max-w-md">
+          <div class="mb-8">
+            <div class="text-2xl font-extrabold tracking-tight">ログイン</div>
+            <div class="mt-2 text-slate-500">
+              アカウント情報を入力してください（プロトタイプ）
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
+            <!-- SSO buttons (dummy) -->
+            <div class="space-y-3">
+              <button
+                type="button"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3
