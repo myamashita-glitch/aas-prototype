@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>最終投稿（要点メモ挿入） - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-[#EEF3FF] text-slate-900">
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") window.location.href = "./login.html";
+    </script>
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-[1400px] px-6 py-5 flex items-center justify-between">
+        <div>
+          <div class="text-2xl font-extrabold tracking-tight">最終投稿</div>
+          <div class="text-sm text-slate-500">左の「要点メモ」から文章素材を挿入できます</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700 hover:bg-slate-50" onclick="history.back()">
+            ← 戻る
+          </button>
+          <a class="rounded-xl bg-slate-700 px-4 py-3 text-white font-bold hover:bg-slate-800" href="./results.html">受験結果へ</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1400px] px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 items-start">
+        <!-- LEFT: 要点メモ -->
+        <aside class="space-y-4">
+          <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+            <div class="font-extrabold text-slate-800">要点メモ（素材）</div>
+            <div class="mt-1 text-sm text-slate-500">
+              ヒアリングで出た要点をここにメモし、<b>挿入</b>で本文に差し込めます。
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button class="rounded-xl bg-blue-600 px-4 py-2 text-white font-extrabold hover:bg-blue-700" onclick="insertAllPoints()">
+                まとめて挿入
+              </button>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="insertDemoPoints()">
+                デモ要点
+              </button>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="savePoints()">
+                保存
+              </button>
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="loadPoints()">
+                読込
+              </button>
+            </div>
+          </div>
+
+          <div id="points" class="space-y-4"></div>
+
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div class="font-extrabold">使い方</div>
+            <ul class="mt-2 list-disc pl-5 space-y-1">
+              <li>左に要点を書いて、<b>挿入</b>で本文へ差し込み</li>
+              <li>書きながら要点を追記してもOK</li>
+              <li>要点はローカル保存（プロトタイプ）</li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- RIGHT: 本文 -->
+        <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-8">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+              <div>
+                <h2 class="text-xl font-extrabold">最終提案（フリー記載）</h2>
+                <p class="mt-2 text-slate-600 text-sm">
+                  左の要点メモを活用し、文章として整えて提出してください。
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="insertTemplate()">
+                  テンプレ挿入
+                </button>
+                <button class="rounded-xl bg-blue-600 px-4 py-2 text-white font-extrabold hover:bg-blue-700" onclick="submitFinal()">
+                  提出する
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-5 relative">
+              <textarea
+                id="finalText"
+                class="w-full min-h-[520px] rounded-2xl border border-slate-200 bg-white p-5 pr-24 outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="左の要点メモから挿入しながら、最終提案を文章化してください。"
+                maxlength="8000"
+              ></textarea>
+              <div class="absolute right-5 bottom-4 text-sm text-slate-400 font-semibold">
+                <span id="count">0</span> / 8000
+              </div>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500 text-center">
+              ※プロトタイプ：提出はローカル保存（localStorage）で擬似的に行います。
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const POINTS_KEY = "aas_submit4_points";
+      const RESULTS_KEY = "aas_results";
+
+      const tpl = `【1. 目的（今回のゴール）】
+- 
+
+【2. 現状課題（何が詰まっているか）】
+- 
+
+【3. 提案（何をどう変えるか）】
+- 
+
+【4. 期待効果（KPI/定量）】
+- 
+
+【5. 検証計画（PoC範囲・期間・評価）】
+- 
+
+【6. 次アクション（誰が・いつまでに）】
+- `;
+
+      const pointDefs = [
+        { key: "purpose", title: "目的（今回のゴール）", hint: "例：属人性を減らし、取りこぼしを抑える" },
+        { key: "current", title: "現状（どうやって選んでいるか）", hint: "例：ベテランは経験則／若手は残高重視" },
+        { key: "issue", title: "課題（何が詰まっているか）", hint: "例：判断のブレ、空振り、取りこぼし" },
+        { key: "target", title: "予測対象（誰を/いつ/何を）", hint: "例：来月の相談確度（購入/売却/乗換）" },
+        { key: "ops", title: "運用（どう使うか）", hint: "例：確率上位N件を訪問候補として提示" },
+        { key: "poc", title: "PoC（範囲・期間・評価）", hint: "例：2支店×3ヶ月、KPI=取りこぼし/空振り/受容性" },
+        { key: "next", title: "次アクション（誰が・いつまでに）", hint: "例：成功条件合意→データ抽出→検証設計" },
+      ];
+
+      const finalText = document.getElementById("finalText");
+      const count = document.getElementById("count");
+      const pointsHost = document.getElementById("points");
+
+      function esc(s) {
+        return String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+      }
+
+      function updateCount() {
+        count.textContent = String(finalText.value.length);
+      }
+      finalText.addEventListener("input", updateCount);
+      updateCount();
+
+      function renderPoints(values = {}) {
+        pointsHost.innerHTML = pointDefs
+          .map((d) => {
+            const v = values[d.key] || "";
+            return `
+              <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="font-extrabold">${esc(d.title)}</div>
+                    <button class="rounded-xl bg-blue-600 px-3 py-2 text-white font-extrabold hover:bg-blue-700"
+                      onclick="insertPoint('${d.key}')">挿入</button>
+                  </div>
+                  <div class="mt-2 text-xs text-slate-500">${esc(d.hint)}</div>
+                  <textarea id="pt_${d.key}"
+                    class="mt-3 w-full min-h-[90px] rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                    placeholder="${esc(d.hint)}">${esc(v)}</textarea>
+                </div>
+              </section>
+            `;
+          })
+          .join("");
+      }
+
+      function getPointsValues() {
+        const obj = {};
+        for (const d of pointDefs) {
+          const el = document.getElementById(`pt_${d.key}`);
+          obj[d.key] = (el?.value || "").trim();
+        }
+        return obj;
+      }
+
+      function insertTemplate() {
+        const cur = finalText.value.trim();
+        finalText.value = cur ? cur + "\n\n" + tpl : tpl;
+        finalText.focus();
+        updateCount();
+      }
+      window.insertTemplate = insertTemplate;
+
+      function insertPoint(key) {
+        const d = pointDefs.find((x) => x.key === key);
+        if (!d) return;
+        const v = (document.getElementById(`pt_${key}`)?.value || "").trim();
+        if (!v) {
+          alert("要点が空です。左側にメモを書いてから挿入してください。");
+          return;
+        }
+        const block = `【${d.title}】\n${v}\n`;
+        finalText.value = finalText.value.trim() ? finalText.value.trim() + "\n\n" + block : block;
+        finalText.focus();
+        updateCount();
+      }
+      window.insertPoint = insertPoint;
+
+      function insertAllPoints() {
+        const vals = getPointsValues();
+        const blocks = pointDefs
+          .map((d) => (vals[d.key] ? `【${d.title}】\n${vals[d.key]}\n` : ""))
+          .filter(Boolean)
+          .join("\n");
+        if (!blocks) {
+          alert("要点が空です。左側にメモを書いてから実行してください。");
+          return;
+        }
+        finalText.value = finalText.value.trim() ? finalText.value.trim() + "\n\n" + blocks : blocks;
+        finalText.focus();
+        updateCount();
+      }
+      window.insertAllPoints = insertAllPoints;
+
+      function insertDemoPoints() {
+        const demo = {
+          purpose: "営業ターゲット選定の属人性を減らし、取りこぼしを抑える。",
+          current: "ベテランはボーナス期に動く顧客・乗換に応じやすい顧客を優先。若手は残高や購入からの経過など数字ベースに寄りがち。",
+          issue: "判断のブレが大きく、空振りが多い。取りこぼしも発生している可能性が高い。",
+          target: "翌月〜翌々月の「相談確度（購入/売却/乗換）」を確率で予測する。",
+          ops: "確率上位N件を訪問候補として提示し、支店・担当者が最終判断してフォローする。",
+          poc: "まず2支店×3ヶ月で検証。KPIは取りこぼし/空振り/成約率に加え、現場受容性（説明可能性）も評価する。",
+          next: "成功条件の合意 → データ抽出 → 検証設計（リーク対策含む） → PoC実施。",
+        };
+        renderPoints(demo);
+      }
+      window.insertDemoPoints = insertDemoPoints;
+
+      function savePoints() {
+        const v = getPointsValues();
+        localStorage.setItem(POINTS_KEY, JSON.stringify(v));
+        alert("要点メモを保存しました（ローカル）");
+      }
+      window.savePoints = savePoints;
+
+      function loadPoints() {
+        try {
+          const raw = localStorage.getItem(POINTS_KEY);
+          if (!raw) return alert("保存された要点メモがありません。");
+          renderPoints(JSON.parse(raw));
+          alert("要点メモを読み込みました");
+        } catch {
+          alert("読み込みに失敗しました");
+        }
+      }
+      window.loadPoints = loadPoints;
+
+      function submitFinal() {
+        const text = finalText.value.trim();
+        if (!text) return alert("最終提案が空です。");
+
+        let arr = [];
+        try {
+          arr = JSON.parse(localStorage.getItem(RESULTS_KEY) || "[]");
+          if (!Array.isArray(arr)) arr = [];
+        } catch {
+          arr = [];
+        }
+
+        const id = Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+        const now = new Date().toISOString();
+
+        arr.unshift({
+          id,
+          scenario: "マナビDX QUEST（ケース3）",
+          case: "ケース3",
+          status: "提出済",
+          submittedAt: now,
+          finalPost: text,
+          overall: 50,
+        });
+
+        localStorage.setItem(RESULTS_KEY, JSON.stringify(arr));
+        window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
+      }
+      window.submitFinal = submitFinal;
+
+      // initial
+      renderPoints({});
+    </script>
+  </body>
+</html>
