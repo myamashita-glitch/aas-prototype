@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Simulation - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-900">
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <a href="./index.html" class="font-semibold hover:underline">← 戻る</a>
+        <div class="text-sm text-slate-500">プロトタイプ：シミュレーション画面</div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="lg:col-span-2 rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
+          <h1 class="text-xl font-bold">営業支援AI（ターゲットリスト）ヒアリング</h1>
+          <p class="mt-2 text-slate-600">
+            ここにチャット/ロールプレイUIを実装していきます（次のスクショで合わせ込み）。
+          </p>
+
+          <div class="mt-6 space-y-3">
+            <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+              <div class="text-xs text-slate-500">AI</div>
+              <div class="mt-1">本日の目的を教えてください。どんなターゲットリストを作りたいですか？</div>
+            </div>
+            <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-4">
+              <div class="text-xs text-indigo-600">あなた</div>
+              <div class="mt-1">中堅企業向けの新規開拓リストを作りたいです。</div>
+            </div>
+          </div>
+
+          <form class="mt-6 flex gap-2" onsubmit="return false;">
+            <input
+              class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="メッセージを入力…"
+            />
+            <button
+              class="rounded-xl bg-blue-600 px-5 py-3 text-white font-semibold shadow hover:bg-blue-700 transition"
+              onclick="alert('プロトタイプ：送信（ダミー）')"
+            >
+              送信
+            </button>
+          </form>
+        </section>
+
+        <aside class="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
+          <div class="font-bold">進行状況</div>
+          <div class="mt-3 space-y-2 text-sm">
+            <div class="flex items-center justify-between">
+              <span>ステップ1</span><span class="text-slate-500">完了</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>ステップ2</span><span class="text-slate-500">進行中</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>ステップ3</span><span class="text-slate-500">未着手</span>
+            </div>
+          </div>
+
+          <button
+            class="mt-6 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-semibold hover:bg-slate-100 transition"
+            onclick="alert('プロトタイプ：一時保存（ダミー）')"
+          >
+            一時保存
+          </button>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
