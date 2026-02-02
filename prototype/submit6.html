@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>最終投稿（例文つき） - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-[#EEF3FF] text-slate-900">
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") window.location.href = "./login.html";
+    </script>
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-[1200px] px-6 py-5 flex items-center justify-between">
+        <div>
+          <div class="text-2xl font-extrabold tracking-tight">最終投稿</div>
+          <div class="text-sm text-slate-500">例文をそのまま挿入して編集できます</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700 hover:bg-slate-50" onclick="history.back()">← 戻る</button>
+          <a class="rounded-xl bg-slate-700 px-4 py-3 text-white font-bold hover:bg-slate-800" href="./results.html">受験結果へ</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1200px] px-6 py-8 space-y-6">
+      <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-8">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-extrabold">お客様への最終提案</h2>
+              <p class="mt-2 text-slate-600 text-sm">
+                “シミュレーションの文脈に合う例文”に差し替え済みです。まず例文を挿入して、状況に合わせて編集してください。
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" onclick="insertTemplate()">
+                テンプレ挿入
+              </button>
+              <button class="rounded-xl bg-blue-600 px-4 py-2 text-white font-extrabold hover:bg-blue-700" onclick="insertExample()">
+                例文を挿入
+              </button>
+              <button id="submitBtn" class="rounded-xl bg-slate-300 px-5 py-3 text-white font-extrabold cursor-not-allowed" disabled onclick="submitFinal()">
+                提出する
+              </button>
+            </div>
+          </div>
+
+          <!-- ✅ 例文（見える化） -->
+          <details class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5" open>
+            <summary class="cursor-pointer font-extrabold">例文（このまま貼って編集OK）</summary>
+            <pre id="exampleBox" class="mt-3 whitespace-pre-wrap rounded-xl bg-white border border-slate-200 p-4 text-sm leading-relaxed text-slate-800"></pre>
+          </details>
+
+          <div class="mt-6 relative">
+            <textarea
+              id="finalText"
+              class="w-full min-h-[520px] rounded-2xl border border-slate-200 bg-white p-5 pr-24 outline-none focus:ring-2 focus:ring-blue-100"
+              placeholder="例：目的→現状課題→提案→期待効果→PoC→次アクション の順で書くと迷いにくいです。"
+              maxlength="8000"
+            ></textarea>
+            <div class="absolute right-5 bottom-4 text-sm text-slate-400 font-semibold">
+              <span id="count">0</span> / 8000
+            </div>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500 text-center">
+            ※プロトタイプ：提出はローカル保存（localStorage）で擬似的に行います。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const RESULTS_KEY = "aas_results";
+      const finalText = document.getElementById("finalText");
+      const count = document.getElementById("count");
+      const submitBtn = document.getElementById("submitBtn");
+      const exampleBox = document.getElementById("exampleBox");
+
+      const tpl = `【目的（今回のゴール）】
+- 例：営業ターゲット選定の属人性を減らし、取りこぼしを抑える
+
+【現状課題（何が詰まっているか）】
+- 例：ベテランは経験則、若手は残高重視で判断がブレる／空振りが多い
+
+【提案（何をどう変えるか）】
+- 例：取引・提案履歴から「来月の相談確度」を予測し、上位顧客を訪問候補として提示する
+
+【期待効果（KPI/定量）】
+- 例：取りこぼし率↓、成約率↑、訪問準備時間↓（◯%目標 など）
+
+【検証計画（PoC範囲・期間・評価）】
+- 例：対象：◯支店／期間：◯ヶ月／評価：取りこぼし・空振り・現場受容性
+
+【次アクション（誰が・いつまでに）】
+- 例：成功条件合意 → データ抽出 → PoC実施（担当：◯◯、期限：◯/◯）`;
+
+      // ✅ 文脈に合う例文（営業支援AI）
+      const example = `【目的（今回のゴール）】
+営業ターゲット選定の属人性を減らし、取りこぼしを抑えつつ、現場の訪問効率を上げることを目的とします。
+
+【現状課題（何が詰まっているか）】
+現状は、ベテランは経験則（ボーナス期に動きやすい顧客、乗換提案に応じやすい顧客など）に依存し、若手は残高や購入からの経過など“分かりやすい数値”に寄りがちです。
+その結果、判断のブレが大きく、空振りが増えたり、潜在ニーズのある顧客の取りこぼしが起きやすい状態です。
+
+【提案（何をどう変えるか）】
+取引履歴・提案履歴・来店/接触履歴などから、翌月〜翌々月の「相談確度（購入/売却/乗換）」を確率で推定し、
+確率上位N件を“訪問候補”として提示します。最終判断は支店・担当者が行い、AIは意思決定を補助する位置づけにします。
+
+【期待効果（KPI/定量）】
+・取りこぼしの抑制（本来相談に至る顧客を拾う）
+・空振り削減（優先度の低い訪問を減らす）
+・訪問準備時間の削減（リスト作成の効率化）
+KPIは、取りこぼし率/空振り率/成約率に加え、現場受容性（説明可能性、使いやすさ）も評価します。
+
+【検証計画（PoC範囲・期間・評価）】
+まずは2支店×3ヶ月でPoCを実施し、期間内の運用を想定した検証設計（データ分割・リーク対策）を行います。
+評価は、精度指標だけでなく、上位N件提示が現場の行動に繋がるか（採用率/納得感）も確認します。
+
+【次アクション（誰が・いつまでに）】
+FD推進室・個人営業部課長とPoC成功条件を合意 → 必要データの抽出・定義 → 検証設計（リーク対策含む） → PoC実施。
+担当者と期限を明確化し、関係者（現場/システム部）を巻き込みながら進めます。`;
+
+      exampleBox.textContent = example;
+
+      function update() {
+        count.textContent = String(finalText.value.length);
+        const ok = finalText.value.trim().length > 0;
+        submitBtn.disabled = !ok;
+        submitBtn.className =
+          "rounded-xl px-5 py-3 font-extrabold " +
+          (ok ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-slate-300 text-white cursor-not-allowed");
+      }
+
+      function insertTemplate() {
+        const cur = finalText.value.trim();
+        finalText.value = cur ? cur + "\n\n" + tpl : tpl;
+        finalText.focus();
+        update();
+      }
+      window.insertTemplate = insertTemplate;
+
+      function insertExample() {
+        const cur = finalText.value.trim();
+        finalText.value = cur ? cur + "\n\n" + example : example;
+        finalText.focus();
+        update();
+      }
+      window.insertExample = insertExample;
+
+      function submitFinal() {
+        const text = finalText.value.trim();
+        if (!text) return;
+
+        let arr = [];
+        try {
+          arr = JSON.parse(localStorage.getItem(RESULTS_KEY) || "[]");
+          if (!Array.isArray(arr)) arr = [];
+        } catch {
+          arr = [];
+        }
+
+        const id = Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+        const now = new Date().toISOString();
+
+        arr.unshift({
+          id,
+          scenario: "マナビDX QUEST（ケース3）",
+          case: "ケース3",
+          status: "提出済",
+          submittedAt: now,
+          finalPost: text,
+          overall: 65,
+        });
+
+        localStorage.setItem(RESULTS_KEY, JSON.stringify(arr));
+        window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
+      }
+      window.submitFinal = submitFinal;
+
+      finalText.addEventListener("input", update);
+      update();
+    </script>
+  </body>
+</html>
