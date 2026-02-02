@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>最終投稿 - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-[#EEF3FF] text-slate-900">
+    <!-- auth guard (prototype) -->
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") {
+        // ログインページがある前提（なければ index.html に変更）
+        window.location.href = "./login.html";
+      }
+    </script>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-[1200px] px-6 py-5 flex items-center justify-between">
+        <h1 class="text-3xl font-extrabold tracking-tight">最終投稿</h1>
+
+        <button
+          class="rounded-xl bg-slate-700 px-5 py-3 text-white font-bold shadow hover:bg-slate-800 active:translate-y-[1px] transition"
+          type="button"
+          onclick="history.back()"
+        >
+          ← 戻る
+        </button>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1200px] px-6 py-8">
+      <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-2xl font-extrabold">お客様への最終提案</h2>
+          <p class="mt-2 text-slate-600">
+            シミュレーションの状況を踏まえ、お客様への最終的な提案を記述してください。
+          </p>
+
+          <!-- ✅ 改善案1：骨子テンプレ（固定表示） -->
+          <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <div class="font-extrabold text-slate-800">書く内容の「型」</div>
+                <div class="text-sm text-slate-500 mt-1">
+                  迷ったらこの骨子をそのまま貼って、埋めるだけでOKです。
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button
+                  class="rounded-xl bg-blue-600 px-4 py-2 text-white font-bold hover:bg-blue-700"
+                  type="button"
+                  onclick="insertTemplate()"
+                >
+                  テンプレを挿入
+                </button>
+                <button
+                  class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 hover:bg-slate-50"
+                  type="button"
+                  onclick="copyTemplate()"
+                >
+                  コピー
+                </button>
+              </div>
+            </div>
+
+            <pre id="tplBox" class="mt-4 whitespace-pre-wrap rounded-xl bg-white border border-slate-200 p-4 text-sm leading-relaxed text-slate-800">【1. 目的（今回のゴール）】
+- 例：営業ターゲット選定の属人性を減らし、取りこぼしを抑える
+
+【2. 現状課題（何が詰まっているか）】
+- 例：ベテランは経験則、若手は残高重視で判断がブレる／空振りが多い
+
+【3. 提案（何をどう変えるか）】
+- 例：取引・提案履歴から「来月の相談確度」を予測し、上位顧客を訪問候補として提示する
+
+【4. 期待効果（KPI/定量）】
+- 例：取りこぼし率↓、成約率↑、訪問準備時間↓（◯%目標 など）
+
+【5. 検証計画（PoC範囲・期間・評価）】
+- 例：対象：◯支店／期間：◯ヶ月／評価：取りこぼし・空振り・現場受容性
+
+【6. 次アクション（誰が・いつまでに）】
+- 例：FD推進室と成功条件合意 → データ抽出 → PoC実施（担当：◯◯、期限：◯/◯）</pre>
+          </div>
+
+          <!-- Input -->
+          <div class="mt-6">
+            <div class="relative">
+              <textarea
+                id="finalText"
+                class="w-full min-h-[360px] rounded-2xl border border-slate-200 bg-white p-5 pr-24 outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="ここに最終提案を記載してください（テンプレを挿入して埋めると書きやすいです）"
+                maxlength="2000"
+              ></textarea>
+              <div class="absolute right-5 bottom-4 text-sm text-slate-400 font-semibold">
+                <span id="count">0</span> / 2000文字
+              </div>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500 text-center">
+              この投稿は後から編集できません。よく確認してから送信してください。
+            </p>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                class="rounded-2xl bg-slate-600 hover:bg-slate-700 text-white font-extrabold px-6 py-4"
+                type="button"
+                onclick="window.location.href='./admin.html'"
+              >
+                管理画面へ戻る
+              </button>
+
+              <button
+                id="submitBtn"
+                class="rounded-2xl bg-slate-300 text-white font-extrabold px-6 py-4 cursor-not-allowed"
+                type="button"
+                disabled
+                onclick="submitFinal()"
+              >
+                <span class="inline-flex items-center justify-center gap-2">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2 11 13" />
+                    <path d="M22 2 15 22l-4-9-9-4 20-7Z" />
+                  </svg>
+                  投稿を送信
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const textarea = document.getElementById("finalText");
+      const count = document.getElementById("count");
+      const btn = document.getElementById("submitBtn");
+      const tpl = document.getElementById("tplBox").textContent;
+
+      function refresh() {
+        const len = textarea.value.length;
+        count.textContent = String(len);
+
+        const ok = len > 0;
+        btn.disabled = !ok;
+        btn.className =
+          "rounded-2xl px-6 py-4 font-extrabold " +
+          (ok
+            ? "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-slate-300 text-white cursor-not-allowed");
+      }
+
+      function insertTemplate() {
+        // すでに何か書いてあっても消さずに追記（安全）
+        const current = textarea.value.trim();
+        textarea.value = current ? textarea.value + "\n\n" + tpl : tpl;
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+        refresh();
+      }
+
+      async function copyTemplate() {
+        try {
+          await navigator.clipboard.writeText(tpl);
+          alert("テンプレをコピーしました");
+        } catch {
+          // clipboard不可環境用：一応選択状態にする
+          textarea.value = tpl;
+          textarea.select();
+          alert("コピーに失敗したので、テンプレを入力欄に入れました（Ctrl+Cでコピーしてください）");
+          refresh();
+        }
+      }
+
+      function submitFinal() {
+        // プロトタイプ用：送信内容を保存して results へ行く例
+        const text = textarea.value.trim();
+        if (!text) return;
+
+        localStorage.setItem("aas_latest_final_post", text);
+        alert("プロトタイプ：送信しました（ダミー）");
+        window.location.href = "./results.html";
+      }
+
+      textarea.addEventListener("input", refresh);
+      refresh();
+    </script>
+  </body>
+</html>
