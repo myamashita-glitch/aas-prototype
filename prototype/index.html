@@ -3,72 +3,139 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Simulation - Prototype</title>
+    <title>SIGNATE AI Agent Simulation - Prototype</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
+
   <body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-900">
+    <!-- Header -->
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
       <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-        <a href="./index.html" class="font-semibold hover:underline">← 戻る</a>
-        <div class="text-sm text-slate-500">プロトタイプ：シミュレーション画面</div>
+        <div class="leading-tight">
+          <div class="text-xl font-semibold tracking-tight">SIGNATE AI Agent Simulation</div>
+          <div class="text-sm text-slate-500">AIを活用した実践的なビジネスシミュレーションを体験</div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Bell -->
+          <button
+            class="h-10 w-10 rounded-full border border-slate-200 bg-white shadow-sm hover:bg-slate-50 transition flex items-center justify-center"
+            aria-label="notifications"
+            title="通知"
+          >
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5" />
+              <path d="M9 17a3 3 0 0 0 6 0" />
+            </svg>
+          </button>
+
+          <!-- Settings icon + 管理画面 -->
+          <a href="./admin.html" class="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+              <path
+                d="M19.4 15a7.9 7.9 0 0 0 .1-1 7.9 7.9 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a8 8 0 0 0-1.7-1l-.4-2.6H9.1L8.7 7a8 8 0 0 0-1.7 1l-2.4-1-2 3.4L4.6 13a7.9 7.9 0 0 0-.1 1 7.9 7.9 0 0 0 .1 1l-2 1.6 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 2.6h5.8l.4-2.6a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.6Z"
+              />
+            </svg>
+            <span class="font-medium">管理画面</span>
+          </a>
+        </div>
       </div>
     </header>
 
-    <main class="mx-auto max-w-6xl px-6 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <section class="lg:col-span-2 rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
-          <h1 class="text-xl font-bold">営業支援AI（ターゲットリスト）ヒアリング</h1>
-          <p class="mt-2 text-slate-600">
-            ここにチャット/ロールプレイUIを実装していきます（次のスクショで合わせ込み）。
-          </p>
+    <main class="mx-auto max-w-6xl px-6 pt-8 pb-16">
+      <!-- List -->
+      <section class="mt-0">
+        <div class="mb-4">
+          <h2 class="text-lg font-bold">利用可能なシミュレーション</h2>
+          <p class="text-sm text-slate-500">3件のシミュレーションが利用可能です</p>
+        </div>
 
-          <div class="mt-6 space-y-3">
-            <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
-              <div class="text-xs text-slate-500">AI</div>
-              <div class="mt-1">本日の目的を教えてください。どんなターゲットリストを作りたいですか？</div>
-            </div>
-            <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-4">
-              <div class="text-xs text-indigo-600">あなた</div>
-              <div class="mt-1">中堅企業向けの新規開拓リストを作りたいです。</div>
-            </div>
-          </div>
+        <div class="space-y-6">
+          <!-- Card 1 -->
+          <article class="rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="p-6 flex items-center justify-between gap-6">
+              <div>
+                <div class="flex items-center gap-3">
+                  <h3 class="text-xl font-bold">マナビDX QUEST（ケース1）</h3>
+                  <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600 border border-indigo-100">
+                    フリー
+                  </span>
+                </div>
+                <div class="mt-2 text-slate-500">→ クリックして開始</div>
+              </div>
 
-          <form class="mt-6 flex gap-2" onsubmit="return false;">
-            <input
-              class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-200"
-              placeholder="メッセージを入力…"
-            />
-            <button
-              class="rounded-xl bg-blue-600 px-5 py-3 text-white font-semibold shadow hover:bg-blue-700 transition"
-              onclick="alert('プロトタイプ：送信（ダミー）')"
-            >
-              送信
-            </button>
-          </form>
-        </section>
+              <a
+                href="./simulation.html"
+                class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-white font-semibold shadow hover:bg-blue-700 active:translate-y-[1px] transition"
+              >
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                開始
+              </a>
+            </div>
+          </article>
 
-        <aside class="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
-          <div class="font-bold">進行状況</div>
-          <div class="mt-3 space-y-2 text-sm">
-            <div class="flex items-center justify-between">
-              <span>ステップ1</span><span class="text-slate-500">完了</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>ステップ2</span><span class="text-slate-500">進行中</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>ステップ3</span><span class="text-slate-500">未着手</span>
-            </div>
-          </div>
+          <!-- Card 2 (with tasks) -->
+          <article class="rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="p-6 flex items-center justify-between gap-6">
+              <div class="max-w-3xl">
+                <div class="flex items-center gap-3">
+                  <h3 class="text-xl font-bold">マナビDX QUEST（ケース2）</h3>
+                  <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600 border border-indigo-100">
+                    フリー
+                  </span>
+                </div>
 
-          <button
-            class="mt-6 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-semibold hover:bg-slate-100 transition"
-            onclick="alert('プロトタイプ：一時保存（ダミー）')"
-          >
-            一時保存
-          </button>
-        </aside>
-      </div>
+                <div class="mt-4">
+                  <div class="font-semibold">課題一覧</div>
+                  <ul class="mt-2 list-disc pl-5 text-slate-700">
+                    <li>営業支援AI（ターゲットリスト）要求定義とヒアリング・シミュレーション</li>
+                  </ul>
+                </div>
+
+                <div class="mt-3 text-slate-500">→ クリックして開始</div>
+              </div>
+
+              <a
+                href="./simulation.html"
+                class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-white font-semibold shadow hover:bg-blue-700 active:translate-y-[1px] transition"
+              >
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                開始
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="p-6 flex items-center justify-between gap-6">
+              <div>
+                <div class="flex items-center gap-3">
+                  <h3 class="text-xl font-bold">マナビDX QUEST（ケース3）</h3>
+                  <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-600 border border-indigo-100">
+                    フリー
+                  </span>
+                </div>
+                <div class="mt-2 text-slate-500">→ クリックして開始</div>
+              </div>
+
+              <a
+                href="./simulation.html"
+                class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-white font-semibold shadow hover:bg-blue-700 active:translate-y-[1px] transition"
+              >
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                開始
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
   </body>
 </html>
