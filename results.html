@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>受験結果・評価一覧 - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <!-- auth guard (prototype) -->
+    <script>
+      if (localStorage.getItem("aas_logged_in") !== "1") {
+        window.location.href = "./login.html";
+      }
+    </script>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+      <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <div class="leading-tight">
+          <div class="text-xl font-semibold tracking-tight">SIGNATE AI Agent Simulation</div>
+          <div class="text-sm text-slate-500">受験結果・評価一覧</div>
+        </div>
+
+        <nav class="flex items-center gap-3">
+          <a
+            href="./index.html"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            シミュレーション一覧
+          </a>
+          <a
+            href="./admin.html"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            管理画面
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-6 py-8">
+      <!-- Top actions -->
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight">受験結果・評価一覧</h1>
+          <p class="mt-1 text-slate-500 text-sm">提出（受験）ごとの総合スコアと評価の要点を確認できます。</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="./index.html"
+            class="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-5 py-3"
+          >
+            新しく開始
+          </a>
+          <button
+            class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-bold px-4 py-3"
+            onclick="seedDemo(true)"
+            title="デモデータを再生成"
+          >
+            デモ再生成
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <section class="mt-6 rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div class="md:col-span-5">
+            <label class="text-xs font-bold text-slate-600">検索（シナリオ名 / 最終投稿）</label>
+            <input
+              id="q"
+              class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              placeholder="例：ケース3、ターゲットリスト…"
+            />
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold text-slate-600">ケース</label>
+            <select
+              id="caseFilter"
+              class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">すべて</option>
+              <option value="ケース1">ケース1</option>
+              <option value="ケース2">ケース2</option>
+              <option value="ケース3">ケース3</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-600">状態</label>
+            <select
+              id="statusFilter"
+              class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">すべて</option>
+              <option value="提出済">提出済</option>
+              <option value="時間切れ">時間切れ</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-xs font-bold text-slate-600">並び替え</label>
+            <select
+              id="sortBy"
+              class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="new">新しい順</option>
+              <option value="old">古い順</option>
+              <option value="score_desc">スコア高い順</option>
+              <option value="score_asc">スコア低い順</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- List -->
+      <section class="mt-6">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-slate-500">
+            <span id="count">0</span>件
+          </div>
+          <button
+            class="text-sm font-bold text-slate-600 hover:underline"
+            onclick="clearFilters()"
+          >
+            フィルタをクリア
+          </button>
+        </div>
+
+        <div class="mt-3 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="overflow-auto">
+            <table class="min-w-[920px] w-full">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr class="text-left text-xs font-extrabold text-slate-600">
+                  <th class="px-5 py-3">提出日時</th>
+                  <th class="px-5 py-3">シナリオ</th>
+                  <th class="px-5 py-3">状態</th>
+                  <th class="px-5 py-3">総合スコア</th>
+                  <th class="px-5 py-3">項目サマリ</th>
+                  <th class="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "aas_results";
+
+      function nowISO() {
+        return new Date().toISOString();
+      }
+      function fmt(dt) {
+        const d = new Date(dt);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        return `${y}/${m}/${day} ${hh}:${mm}`;
+      }
+      function uid() {
+        return Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+      }
+
+      function seedDemo(force = false) {
+        const existing = localStorage.getItem(STORAGE_KEY);
+        if (existing && !force) return;
+
+        const demo = [
+          {
+            id: uid(),
+            scenario: "マナビDX QUEST（ケース3）",
+            case: "ケース3",
+            status: "提出済",
+            submittedAt: "2026-02-02T16:36:59+09:00",
+            finalPost:
+              "まずベテランだと、「毎年ボーナス時期に必ず何かしら投資の相談がある人」とか、「過去に何度か乗換提案に応じてくれている人」は、今年も動く可能性が高いと見て、かなり上位に持ってきます。一方で若手だと、「残高が大きい人」や「直近で購入から時間が経っている人」みたいに、割と分かりやすい数字ベースで優先度を付けがちですね。",
+            overall: 12,
+            axes: [
+              { key: "purpose", label: "AI活用の目的", score: 5, weight: 3, color: "red" },
+              { key: "as_is", label: "現状・課題", score: 35, weight: 5, color: "red" },
+              { key: "predict", label: "予測対象", score: 8, weight: 4, color: "red" },
+              { key: "poc", label: "PoCの検証目的・範囲", score: 0, weight: 4, color: "gray" },
+            ],
+          },
+          {
+            id: uid(),
+            scenario: "マナビDX QUEST（ケース2）",
+            case: "ケース2",
+            status: "時間切れ",
+            submittedAt: "2026-02-01T18:12:00+09:00",
+            finalPost: "時間切れのため未提出（プロトタイプ）",
+            overall: 0,
+            axes: [
+              { key: "purpose", label: "AI活用の目的", score: 0, weight: 3, color: "gray" },
+              { key: "as_is", label: "現状・課題", score: 0, weight: 5, color: "gray" },
+              { key: "predict", label: "予測対象", score: 0, weight: 4, color: "gray" },
+              { key: "poc", label: "PoCの検証目的・範囲", score: 0, weight: 4, color: "gray" },
+            ],
+          },
+          {
+            id: uid(),
+            scenario: "マナビDX QUEST（ケース1）",
+            case: "ケース1",
+            status: "提出済",
+            submittedAt: "2026-01-29T10:05:00+09:00",
+            finalPost:
+              "目的は、担当者ごとの属人的な選定を補助しつつ、優先度付けの説明可能性を上げること。現状の判断軸を分解して、AIの出力を“候補提示”として組み込みたい。",
+            overall: 48,
+            axes: [
+              { key: "purpose", label: "AI活用の目的", score: 45, weight: 3, color: "blue" },
+              { key: "as_is", label: "現状・課題", score: 52, weight: 5, color: "blue" },
+              { key: "predict", label: "予測対象", score: 40, weight: 4, color: "blue" },
+              { key: "poc", label: "PoCの検証目的・範囲", score: 55, weight: 4, color: "blue" },
+            ],
+          },
+        ];
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(demo));
+      }
+
+      function load() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }
+
+      function badgeStatus(s) {
+        if (s === "提出済")
+          return `<span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700 border border-emerald-100">提出済</span>`;
+        if (s === "時間切れ")
+          return `<span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-700 border border-slate-200">時間切れ</span>`;
+        return `<span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-700 border border-slate-200">${s}</span>`;
+      }
+
+      function scorePill(score) {
+        const cls =
+          score >= 70
+            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+            : score >= 40
+            ? "bg-amber-50 text-amber-700 border-amber-100"
+            : "bg-rose-50 text-rose-700 border-rose-100";
+        return `<span class="inline-flex items-baseline gap-1 rounded-xl px-3 py-2 border ${cls}">
+          <span class="text-xl font-extrabold">${score}</span>
+          <span class="text-xs font-bold">/100</span>
+        </span>`;
+      }
+
+      function miniBars(axes) {
+        return axes
+          .map((a) => {
+            const w = Math.max(0, Math.min(100, a.score));
+            return `
+              <div class="flex items-center gap-3">
+                <div class="w-28 text-xs font-bold text-slate-600">${a.label}</div>
+                <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+                  <div class="h-full bg-blue-600" style="width:${w}%"></div>
+                </div>
+                <div class="w-12 text-right text-xs font-extrabold text-slate-700">${a.score}</div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function render() {
+        const q = document.getElementById("q").value.trim().toLowerCase();
+        const caseF = document.getElementById("caseFilter").value;
+        const statusF = document.getElementById("statusFilter").value;
+        const sortBy = document.getElementById("sortBy").value;
+
+        let items = load();
+
+        // filters
+        items = items.filter((it) => {
+          const hitQ =
+            !q ||
+            it.scenario.toLowerCase().includes(q) ||
+            (it.finalPost || "").toLowerCase().includes(q);
+          const hitCase = !caseF || it.case === caseF;
+          const hitStatus = !statusF || it.status === statusF;
+          return hitQ && hitCase && hitStatus;
+        });
+
+        // sort
+        items.sort((a, b) => {
+          if (sortBy === "new") return new Date(b.submittedAt) - new Date(a.submittedAt);
+          if (sortBy === "old") return new Date(a.submittedAt) - new Date(b.submittedAt);
+          if (sortBy === "score_desc") return (b.overall || 0) - (a.overall || 0);
+          if (sortBy === "score_asc") return (a.overall || 0) - (b.overall || 0);
+          return 0;
+        });
+
+        document.getElementById("count").textContent = String(items.length);
+
+        const tbody = document.getElementById("rows");
+        tbody.innerHTML = items
+          .map((it) => {
+            const summary = miniBars(it.axes || []);
+            return `
+              <tr class="border-b border-slate-200 hover:bg-slate-50 cursor-pointer" onclick="goDetail('${it.id}')">
+                <td class="px-5 py-4 text-sm text-slate-700 whitespace-nowrap">${fmt(it.submittedAt)}</td>
+                <td class="px-5 py-4">
+                  <div class="font-extrabold">${it.scenario}</div>
+                  <div class="text-xs text-slate-500">${it.case}</div>
+                </td>
+                <td class="px-5 py-4">${badgeStatus(it.status)}</td>
+                <td class="px-5 py-4">${scorePill(it.overall || 0)}</td>
+                <td class="px-5 py-4">
+                  <div class="min-w-[360px] space-y-2">${summary}</div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <a class="inline-flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2 font-bold text-slate-700 hover:bg-slate-50" href="./result-detail.html?id=${it.id}">
+                    詳細
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        if (items.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-5 py-10 text-center text-slate-500">
+                条件に一致する結果がありません。
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      function goDetail(id) {
+        window.location.href = `./result-detail.html?id=${encodeURIComponent(id)}`;
+      }
+
+      function clearFilters() {
+        document.getElementById("q").value = "";
+        document.getElementById("caseFilter").value = "";
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("sortBy").value = "new";
+        render();
+      }
+
+      // init
+      seedDemo(false);
+      ["q", "caseFilter", "statusFilter", "sortBy"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+      render();
+    </script>
+  </body>
+</html>
