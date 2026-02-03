@@ -10,11 +10,11 @@
       /* 横方向のサイドバー開閉（PC） */
       @media (min-width: 1024px) {
         #sidebar {
-          width: 340px; /* ← 左を少し狭く（元420想定） */
+          width: 340px; /* 左幅（狭め） */
           transition: width 200ms ease;
         }
         #sidebar.is-collapsed {
-          width: 88px; /* ← 閉じた状態（細いレール） */
+          width: 88px; /* 閉じた状態（細いレール） */
         }
         #sidebar.is-collapsed .sidebar-content {
           display: none;
@@ -24,11 +24,24 @@
         }
       }
 
-      /* モバイルは「閉じる」= 非表示（ヘッダーのボタンで再表示） */
+      /* モバイルは「閉じる」= 非表示 */
       @media (max-width: 1023px) {
         #sidebar.is-collapsed {
           display: none;
         }
+      }
+
+      /* スクロールバーを少しだけ見やすく（任意） */
+      #chatScroll::-webkit-scrollbar,
+      #hintBody::-webkit-scrollbar {
+        width: 10px;
+      }
+      #chatScroll::-webkit-scrollbar-thumb,
+      #hintBody::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 999px;
+        border: 3px solid transparent;
+        background-clip: content-box;
       }
     </style>
   </head>
@@ -73,7 +86,6 @@
     </header>
 
     <main class="mx-auto max-w-[1400px] px-6 py-6">
-      <!-- flexにして、右を最大限広げる -->
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- LEFT: Sidebar -->
         <aside id="sidebar" class="shrink-0">
@@ -83,6 +95,7 @@
               class="h-11 w-11 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center"
               title="開く"
               onclick="toggleSidebar()"
+              type="button"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 6h16M4 12h16M4 18h16" />
@@ -93,6 +106,7 @@
               class="h-11 w-11 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center"
               title="残り時間"
               onclick="expandAndScroll('acc-time')"
+              type="button"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5 text-amber-700" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 8v5l3 3" />
@@ -104,6 +118,7 @@
               class="h-11 w-11 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center"
               title="ケース"
               onclick="expandAndScroll('acc-case')"
+              type="button"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 16v-5" />
@@ -116,6 +131,7 @@
               class="h-11 w-11 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center"
               title="登場人物"
               onclick="expandAndScroll('acc-people')"
+              type="button"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21a8 8 0 1 0-16 0" />
@@ -126,7 +142,7 @@
 
           <!-- 通常表示（開いている時） -->
           <div class="sidebar-content space-y-6">
-            <!-- Sidebar header（開閉ボタン） -->
+            <!-- Sidebar header -->
             <div class="flex items-center justify-between">
               <div class="text-sm font-extrabold text-slate-600">サイドパネル</div>
               <button
@@ -142,7 +158,7 @@
               </button>
             </div>
 
-            <!-- ✅ アコーディオン：残り時間 -->
+            <!-- 残り時間 -->
             <details id="acc-time" class="group rounded-2xl bg-white border-2 border-amber-400 shadow-sm overflow-hidden" open>
               <summary class="list-none cursor-pointer px-6 py-5 flex items-center justify-between">
                 <div class="flex items-center gap-2 font-extrabold text-amber-700">
@@ -165,7 +181,7 @@
               </div>
             </details>
 
-            <!-- ✅ アコーディオン：ケース情報 -->
+            <!-- ケース情報 -->
             <details id="acc-case" class="group rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden" open>
               <summary class="list-none cursor-pointer px-6 py-5 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -191,7 +207,7 @@
               </div>
             </details>
 
-            <!-- ✅ アコーディオン：登場人物 -->
+            <!-- 登場人物 -->
             <details id="acc-people" class="group rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden" open>
               <summary class="list-none cursor-pointer px-6 py-5 flex items-center justify-between">
                 <div class="text-lg font-extrabold">登場人物</div>
@@ -203,9 +219,12 @@
               <div class="px-6 pb-6">
                 <div class="text-sm text-slate-500">外部</div>
 
+                <!-- Person cards -->
                 <button
+                  id="person-kacho"
                   class="mt-4 w-full text-left rounded-2xl border-2 border-blue-500 bg-blue-50/30 p-5 hover:bg-blue-50 transition"
-                  onclick="alert('プロトタイプ：個人営業部課長（詳細ダミー）')"
+                  type="button"
+                  onclick="selectPerson('個人営業部課長')"
                 >
                   <div class="flex items-start gap-4">
                     <div class="h-12 w-12 rounded-full border border-blue-200 bg-white flex items-center justify-center">
@@ -227,8 +246,10 @@
                 </button>
 
                 <button
+                  id="person-a"
                   class="mt-4 w-full text-left rounded-2xl border border-slate-200 bg-slate-50/60 p-5 hover:bg-slate-50 transition"
-                  onclick="alert('プロトタイプ：ベテラン販売員A（詳細ダミー）')"
+                  type="button"
+                  onclick="selectPerson('ベテラン販売員A')"
                 >
                   <div class="flex items-start gap-4">
                     <div class="h-12 w-12 rounded-full border border-emerald-200 bg-white flex items-center justify-center">
@@ -250,8 +271,10 @@
                 </button>
 
                 <button
+                  id="person-b"
                   class="mt-4 w-full text-left rounded-2xl border border-slate-200 bg-slate-50/60 p-5 hover:bg-slate-50 transition"
-                  onclick="alert('プロトタイプ：ベテラン販売員B（詳細ダミー）')"
+                  type="button"
+                  onclick="selectPerson('ベテラン販売員B')"
                 >
                   <div class="flex items-start gap-4">
                     <div class="h-12 w-12 rounded-full border border-purple-200 bg-white flex items-center justify-center">
@@ -276,7 +299,7 @@
           </div>
         </aside>
 
-        <!-- RIGHT: main chat（flex-1で広がる） -->
+        <!-- RIGHT: main -->
         <section class="flex-1 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
           <div class="px-7 py-6 border-b border-slate-200">
             <h1 class="text-xl md:text-2xl font-bold tracking-tight">
@@ -306,60 +329,64 @@
               </div>
             </div>
 
+            <!-- status row -->
             <div class="flex items-center gap-3 text-slate-700">
               <div class="h-10 w-10 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold">個</div>
-              <div class="font-semibold">個人営業部課長さんとやり取り中です</div>
+              <div class="font-semibold" id="talkingWith">個人営業部課長さんとやり取り中です</div>
             </div>
 
-            <div class="flex items-start gap-4">
-              <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-                <span class="text-slate-700 font-bold">個</span>
-              </div>
-
-              <div class="flex-1">
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="font-bold">個人営業部課長</div>
-                    <div class="text-xs text-slate-400">08:32</div>
-                  </div>
-                  <div class="mt-2 text-slate-800 leading-relaxed">
-                    あ、どうも。もう打ち合わせ始めちゃう感じですか？
-                  </div>
+            <!-- seed messages -->
+            <div id="messages" class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                  <span class="text-slate-700 font-bold">個</span>
                 </div>
-              </div>
-            </div>
 
-            <div class="flex items-start gap-4 justify-end">
-              <div class="flex-1 max-w-[760px]">
-                <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="font-bold">ユーザー</div>
-                    <div class="text-xs text-slate-400">08:32</div>
-                  </div>
-                  <div class="mt-2 text-slate-800 leading-relaxed">
-                    お願いします
+                <div class="flex-1">
+                  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-3">
+                      <div class="font-bold">個人営業部課長</div>
+                      <div class="text-xs text-slate-400">08:32</div>
+                    </div>
+                    <div class="mt-2 text-slate-800 leading-relaxed">
+                      あ、どうも。もう打ち合わせ始めちゃう感じですか？
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="h-11 w-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow">
-                ユ
-              </div>
-            </div>
-
-            <div class="flex items-start gap-4">
-              <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-                <span class="text-slate-700 font-bold">個</span>
-              </div>
-
-              <div class="flex-1">
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="font-bold">個人営業部課長</div>
-                    <div class="text-xs text-slate-400">08:32</div>
+              <div class="flex items-start gap-4 justify-end">
+                <div class="flex-1 max-w-[760px]">
+                  <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-3">
+                      <div class="font-bold">ユーザー</div>
+                      <div class="text-xs text-slate-400">08:32</div>
+                    </div>
+                    <div class="mt-2 text-slate-800 leading-relaxed">
+                      お願いします
+                    </div>
                   </div>
-                  <div class="mt-2 text-slate-800 leading-relaxed">
-                    了解です。じゃあ今日は、営業支援AIでどこまでやりたいのか、そのイメージから教えてもらえますか？
+                </div>
+
+                <div class="h-11 w-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow">
+                  ユ
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                  <span class="text-slate-700 font-bold">個</span>
+                </div>
+
+                <div class="flex-1">
+                  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-3">
+                      <div class="font-bold">個人営業部課長</div>
+                      <div class="text-xs text-slate-400">08:32</div>
+                    </div>
+                    <div class="mt-2 text-slate-800 leading-relaxed">
+                      了解です。じゃあ今日は、営業支援AIでどこまでやりたいのか、そのイメージから教えてもらえますか？
+                    </div>
                   </div>
                 </div>
               </div>
@@ -381,14 +408,45 @@
               </div>
             </div>
 
-            <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div class="text-xs text-slate-500">Ctrl+Enterでも送信できます</div>
+            <!-- bottom row: hint area + buttons -->
+            <div class="mt-4 flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-3">
+              <!-- ✅ 緑枠相当：ヒントボタン領域（左下） -->
+              <div class="lg:w-[360px] rounded-2xl border border-slate-200 bg-slate-50 p-4 flex flex-col justify-between">
+                <div class="text-sm text-slate-600">
+                  <div class="font-bold text-slate-800">ヒント</div>
+                  <div class="mt-1">会話の流れから、次に聞くことを提案します。</div>
+                </div>
 
-              <div class="flex items-center gap-3">
+                <div class="mt-3 flex items-center justify-between gap-3">
+                  <div class="text-xs text-slate-500">Ctrl+Enterでも送信できます</div>
+                  <button
+                    id="hintBtn"
+                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2"
+                    type="button"
+                    onclick="openHint()"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 18h.01" />
+                      <path d="M9 14a3 3 0 1 1 6 0c0 2-3 2-3 4" />
+                      <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    ヒント
+                    <span
+                      id="hintBadge"
+                      class="ml-1 inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs"
+                      >—</span
+                    >
+                  </button>
+                </div>
+              </div>
+
+              <!-- buttons area -->
+              <div class="flex-1 flex flex-col md:flex-row md:items-center md:justify-end gap-3">
                 <button
                   id="postBtn"
                   class="min-w-[260px] md:min-w-[360px] rounded-2xl bg-slate-300 text-white font-bold px-6 py-4 flex items-center justify-center gap-2 cursor-not-allowed"
                   disabled
+                  type="button"
                 >
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 2 11 13" />
@@ -399,7 +457,8 @@
 
                 <button
                   class="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-4"
-                  onclick="window.location.href='./results.html'"
+                  type="button"
+                  onclick="goToSubmit()"
                 >
                   提出画面へ移動
                 </button>
@@ -407,15 +466,90 @@
             </div>
 
             <div class="mt-2 text-xs text-slate-500 flex items-center justify-end">
-              投稿数: 2 / 50 (提出上限)
+              <span id="postCountText">投稿数: 2 / 50 (提出上限)</span>
             </div>
           </div>
         </section>
       </div>
     </main>
 
+    <!-- ✅ Hint Modal -->
+    <div id="hintModal" class="fixed inset-0 z-[60] hidden">
+      <div class="absolute inset-0 bg-black/40" onclick="closeHint()"></div>
+
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="w-full max-w-[880px] rounded-2xl bg-white border border-slate-200 shadow-xl overflow-hidden">
+          <div class="px-6 py-5 border-b border-slate-200 flex items-start justify-between gap-3">
+            <div>
+              <div class="text-lg font-extrabold">ヒント</div>
+              <div class="text-sm text-slate-500 mt-1">
+                文脈（会話ログ）から「次に聞くべきこと」を提案します（プロトタイプ：ルールベース）。
+              </div>
+            </div>
+            <button
+              class="rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold text-slate-700 hover:bg-slate-50"
+              type="button"
+              onclick="closeHint()"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2">
+            <!-- left: summary -->
+            <div class="p-6 border-b lg:border-b-0 lg:border-r border-slate-200">
+              <div class="text-sm text-slate-500">やり取り中</div>
+              <div class="mt-1 text-xl font-extrabold" id="hintWho">—</div>
+
+              <div class="mt-5">
+                <div class="font-extrabold">不足していそうな観点</div>
+                <div class="mt-3 flex flex-wrap gap-2" id="missingChips"></div>
+                <div class="mt-3 text-sm text-slate-600" id="missingNote"></div>
+              </div>
+
+              <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="font-extrabold">直近の会話（抜粋）</div>
+                <div class="mt-2 text-sm text-slate-700 leading-relaxed" id="recentSnippet">—</div>
+              </div>
+            </div>
+
+            <!-- right: suggestions -->
+            <div class="p-6">
+              <div class="flex items-center justify-between gap-2">
+                <div class="font-extrabold">おすすめの質問（コピペ可）</div>
+                <button
+                  class="rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold text-slate-700 hover:bg-slate-50"
+                  type="button"
+                  onclick="refreshHint()"
+                >
+                  再生成
+                </button>
+              </div>
+
+              <div id="hintBody" class="mt-4 max-h-[360px] overflow-auto space-y-3"></div>
+
+              <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="text-xs text-slate-500">
+                  ※本番で生成AIを使う場合は、会話ログをAPIへ送って生成します（このプロトタイプはローカル判定）。
+                </div>
+                <button
+                  class="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-4 py-2"
+                  type="button"
+                  onclick="closeHint()"
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
-      // ---- auth / nav ----
+      // -----------------------------
+      // Auth / Nav
+      // -----------------------------
       function logout() {
         localStorage.removeItem("aas_logged_in");
         localStorage.removeItem("aas_user_email");
@@ -423,52 +557,24 @@
         window.location.href = "./login.html";
       }
 
-      function scrollToGuide() {
-        const sc = document.getElementById("chatScroll");
-        const box = document.getElementById("guideBox");
-        if (!sc || !box) return;
-        sc.scrollTo({ top: box.offsetTop - 12, behavior: "smooth" });
+      // -----------------------------
+      // Case by query param
+      // -----------------------------
+      const url = new URL(window.location.href);
+      const caseNum = url.searchParams.get("case") || "3";
+      const caseTitle = document.getElementById("caseTitle");
+      if (caseTitle) caseTitle.textContent = `マナビDX QUEST（ケース${caseNum}）`;
+
+      // submit page (submit3)
+      function goToSubmit() {
+        // ヒアリングログを submit3 で使えるように保存
+        saveHearingLogToStorage();
+        window.location.href = `./submit3.html?case=${encodeURIComponent(caseNum)}`;
       }
 
-      // ---- case title by query param ----
-      const u = new URL(window.location.href);
-      const c = u.searchParams.get("case") || "3";
-      const t = document.getElementById("caseTitle");
-      if (t) t.textContent = `マナビDX QUEST（ケース${c}）`;
-
-      // ---- composer ----
-      const ta = document.getElementById("msg");
-      const count = document.getElementById("count");
-      const postBtn = document.getElementById("postBtn");
-
-      function update() {
-        const len = ta.value.length;
-        count.textContent = String(len);
-        const enabled = len > 0;
-
-        postBtn.disabled = !enabled;
-        postBtn.className =
-          "min-w-[260px] md:min-w-[360px] rounded-2xl px-6 py-4 flex items-center justify-center gap-2 font-bold " +
-          (enabled
-            ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-            : "bg-slate-300 text-white cursor-not-allowed");
-      }
-
-      ta.addEventListener("input", update);
-      ta.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-          e.preventDefault();
-          if (!postBtn.disabled) alert("プロトタイプ：投稿（ダミー）");
-        }
-      });
-
-      postBtn.addEventListener("click", () => {
-        if (!postBtn.disabled) alert("プロトタイプ：投稿（ダミー）");
-      });
-
-      update();
-
-      // ---- sidebar collapse (horizontal) ----
+      // -----------------------------
+      // Sidebar collapse
+      // -----------------------------
       const SIDEBAR_KEY = "aas_sidebar_collapsed";
       const sidebar = document.getElementById("sidebar");
       const topToggle = document.getElementById("sidebarToggleTop");
@@ -490,10 +596,8 @@
         }
       }
 
-      // ヘッダーボタンでも開閉
       topToggle.addEventListener("click", () => toggleSidebar());
 
-      // 折りたたみ状態で、指定アコーディオンへ
       function expandAndScroll(id) {
         sidebar.classList.remove("is-collapsed");
         localStorage.setItem(SIDEBAR_KEY, "0");
@@ -504,11 +608,499 @@
         }, 60);
       }
 
-      // 初期適用
       applySidebarState();
-      // expose to inline onclick
       window.toggleSidebar = toggleSidebar;
       window.expandAndScroll = expandAndScroll;
+
+      // -----------------------------
+      // Scroll to guide
+      // -----------------------------
+      function scrollToGuide() {
+        const sc = document.getElementById("chatScroll");
+        const box = document.getElementById("guideBox");
+        if (!sc || !box) return;
+        sc.scrollTo({ top: box.offsetTop - 12, behavior: "smooth" });
+      }
+      window.scrollToGuide = scrollToGuide;
+
+      // -----------------------------
+      // Conversation state
+      // -----------------------------
+      const STORAGE_MESSAGES_KEY = "aas_conversation_messages";
+      const STORAGE_HEARING_LOG_KEY = "aas_hearing_log";
+
+      // initial selected person
+      let currentPerson = "個人営業部課長";
+
+      // message list (kept in JS)
+      // We store only user side and assistant side as text snippets for prototype
+      let messages = [
+        { role: "assistant", speaker: "個人営業部課長", text: "あ、どうも。もう打ち合わせ始めちゃう感じですか？", time: "08:32" },
+        { role: "user", speaker: "ユーザー", text: "お願いします", time: "08:32" },
+        { role: "assistant", speaker: "個人営業部課長", text: "了解です。じゃあ今日は、営業支援AIでどこまでやりたいのか、そのイメージから教えてもらえますか？", time: "08:32" },
+      ];
+
+      // try load existing stored messages
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_MESSAGES_KEY) || "null");
+        if (Array.isArray(saved) && saved.length >= 3) {
+          messages = saved;
+        }
+      } catch {}
+
+      function persistMessages() {
+        localStorage.setItem(STORAGE_MESSAGES_KEY, JSON.stringify(messages));
+      }
+
+      // -----------------------------
+      // Person selection UI
+      // -----------------------------
+      function selectPerson(name) {
+        currentPerson = name;
+        // update top status line
+        const el = document.getElementById("talkingWith");
+        if (el) el.textContent = `${name}さんとやり取り中です`;
+
+        // update button styles
+        const k = document.getElementById("person-kacho");
+        const a = document.getElementById("person-a");
+        const b = document.getElementById("person-b");
+
+        // reset
+        k.className = k.className.replace("border-2 border-blue-500 bg-blue-50/30", "border border-slate-200 bg-slate-50/60");
+        a.className = a.className.replace("border-2 border-blue-500 bg-blue-50/30", "border border-slate-200 bg-slate-50/60");
+        b.className = b.className.replace("border-2 border-blue-500 bg-blue-50/30", "border border-slate-200 bg-slate-50/60");
+
+        // apply active
+        const active =
+          name === "個人営業部課長" ? k :
+          name === "ベテラン販売員A" ? a : b;
+
+        active.className = active.className.replace("border border-slate-200 bg-slate-50/60", "border-2 border-blue-500 bg-blue-50/30");
+
+        // refresh hint badge
+        updateHintBadge();
+      }
+      window.selectPerson = selectPerson;
+
+      // initialize selection
+      selectPerson("個人営業部課長");
+
+      // -----------------------------
+      // Composer (post)
+      // -----------------------------
+      const ta = document.getElementById("msg");
+      const count = document.getElementById("count");
+      const postBtn = document.getElementById("postBtn");
+      const postCountText = document.getElementById("postCountText");
+
+      let postCount = 2; // seed: user has 2 posts already in the mock
+      const POST_LIMIT = 50;
+
+      function updatePostCount() {
+        postCountText.textContent = `投稿数: ${postCount} / ${POST_LIMIT} (提出上限)`;
+      }
+
+      function nowTime() {
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        return `${hh}:${mm}`;
+      }
+
+      function updateComposer() {
+        const len = ta.value.length;
+        count.textContent = String(len);
+
+        const enabled = len > 0 && postCount < POST_LIMIT;
+
+        postBtn.disabled = !enabled;
+        postBtn.className =
+          "min-w-[260px] md:min-w-[360px] rounded-2xl px-6 py-4 flex items-center justify-center gap-2 font-bold " +
+          (enabled
+            ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+            : "bg-slate-300 text-white cursor-not-allowed");
+      }
+
+      function appendUserMessage(text) {
+        const time = nowTime();
+        messages.push({ role: "user", speaker: "ユーザー", text, time });
+        persistMessages();
+
+        // render to DOM
+        const container = document.getElementById("messages");
+        const wrapper = document.createElement("div");
+        wrapper.className = "flex items-start gap-4 justify-end";
+        wrapper.innerHTML = `
+          <div class="flex-1 max-w-[760px]">
+            <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
+              <div class="flex items-center justify-between gap-3">
+                <div class="font-bold">ユーザー</div>
+                <div class="text-xs text-slate-400">${time}</div>
+              </div>
+              <div class="mt-2 text-slate-800 leading-relaxed">${escapeHtml(text)}</div>
+            </div>
+          </div>
+          <div class="h-11 w-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow">ユ</div>
+        `;
+        container.appendChild(wrapper);
+        scrollChatToBottom();
+      }
+
+      function scrollChatToBottom() {
+        const sc = document.getElementById("chatScroll");
+        sc.scrollTo({ top: sc.scrollHeight, behavior: "smooth" });
+      }
+
+      function saveHearingLogToStorage() {
+        // ヒアリングログとしては、ユーザー発言（質問）と、相手の反応（今回はダミー）をまとめて保存
+        // submit3.html は "aas_hearing_log" を読む仕様
+        const lines = messages.map(m => {
+          const who = m.role === "user" ? "ユーザー" : m.speaker;
+          return `・${who}：${m.text}`;
+        });
+        localStorage.setItem(STORAGE_HEARING_LOG_KEY, lines.join("\n"));
+      }
+
+      postBtn.addEventListener("click", () => {
+        if (postBtn.disabled) return;
+        const text = ta.value.trim();
+        if (!text) return;
+
+        appendUserMessage(text);
+        postCount += 1;
+        updatePostCount();
+
+        // ヒントの精度のため、ログ保存（プロトタイプ）
+        saveHearingLogToStorage();
+
+        ta.value = "";
+        updateComposer();
+        updateHintBadge();
+      });
+
+      ta.addEventListener("input", updateComposer);
+      ta.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          if (!postBtn.disabled) postBtn.click();
+        }
+      });
+
+      updateComposer();
+      updatePostCount();
+
+      // -----------------------------
+      // Hint (rule-based)
+      // -----------------------------
+      const hintModal = document.getElementById("hintModal");
+      const hintWho = document.getElementById("hintWho");
+      const missingChips = document.getElementById("missingChips");
+      const missingNote = document.getElementById("missingNote");
+      const recentSnippet = document.getElementById("recentSnippet");
+      const hintBody = document.getElementById("hintBody");
+      const hintBadge = document.getElementById("hintBadge");
+
+      const CATEGORIES = [
+        { key: "purpose", label: "目的", keywords: ["目的", "ゴール", "狙い", "ねらい", "したい", "目標"] },
+        { key: "current", label: "現状", keywords: ["現状", "現在", "今は", "いま", "プロセス", "運用"] },
+        { key: "issue", label: "課題", keywords: ["課題", "問題", "詰ま", "ボトルネック", "属人", "ブレ", "空振", "取りこぼ"] },
+        { key: "target", label: "予測対象/定義", keywords: ["予測", "対象", "確度", "購入", "売却", "乗換", "いつ", "タイミング"] },
+        { key: "metric", label: "精度目標/KPI", keywords: ["精度", "KPI", "評価", "確率", "閾値", "上位", "何件", "空振り", "取りこぼし"] },
+        { key: "poc", label: "PoC範囲", keywords: ["PoC", "検証", "範囲", "期間", "支店", "データ", "リーク", "サンプル"] },
+        { key: "stake", label: "関係者/合意", keywords: ["関係者", "意思決定", "合意", "承認", "責任者", "システム部", "現場"] },
+      ];
+
+      function normalize(s) {
+        return (s || "").toLowerCase();
+      }
+
+      function getConversationText() {
+        // ヒント生成は「全ログ」使う想定（プロトタイプ）
+        return messages.map(m => `${m.role === "user" ? "ユーザー" : m.speaker}:${m.text}`).join("\n");
+      }
+
+      function detectMissingCategories(convText) {
+        const t = normalize(convText);
+        const missing = [];
+        for (const c of CATEGORIES) {
+          const hit = c.keywords.some(k => t.includes(normalize(k)));
+          if (!hit) missing.push(c);
+        }
+        return missing;
+      }
+
+      function latestSnippetText() {
+        const tail = messages.slice(-4);
+        return tail.map(m => `・${m.role === "user" ? "ユーザー" : m.speaker}：${m.text}`).join("<br/>");
+      }
+
+      function questionBankFor(person, missingKeys) {
+        // 役割ごとに“聞き方”を少し変える
+        const isBoss = person === "個人営業部課長";
+        const isA = person === "ベテラン販売員A";
+        const isB = person === "ベテラン販売員B";
+
+        const qs = [];
+
+        if (missingKeys.includes("purpose")) {
+          qs.push({
+            title: "目的を明確化する",
+            q: isBoss
+              ? "今回AIを入れる“本当の目的”は何ですか？（例：取りこぼし削減／空振り削減／提案品質向上など）優先順位も教えてください。"
+              : "この取り組みで“何が一番変わると嬉しい”ですか？（取りこぼし？空振り？準備時間？）",
+            why: "最終提案で「何のためにAIを使うか」がブレなくなります。"
+          });
+        }
+
+        if (missingKeys.includes("current")) {
+          qs.push({
+            title: "現状プロセスを把握する",
+            q: isA || isB
+              ? "今のターゲット選定は、具体的にどんな手順でやっていますか？（使う指標／順番／判断基準）"
+              : "現状のターゲット選定は、どのデータ・指標を使って、どの順番で決めていますか？",
+            why: "AI出力を“どこに組み込むか”を設計できます。"
+          });
+        }
+
+        if (missingKeys.includes("issue")) {
+          qs.push({
+            title: "課題を言語化する",
+            q: isBoss
+              ? "今のやり方で困っていることは何ですか？（空振り／取りこぼし／工数／説明のしづらさなど）具体例もありますか？"
+              : "「うまくいかなかったケース」はありますか？なぜ外した/取りこぼしたと思いますか？",
+            why: "評価軸（何を改善するか）を決めやすくなります。"
+          });
+        }
+
+        if (missingKeys.includes("target")) {
+          qs.push({
+            title: "予測対象を定義する",
+            q: "AIで“誰に・いつ・何を”予測したいですか？（例：来月の相談確度、購入/売却/乗換、確率で出す等）",
+            why: "モデル入力・出力の仕様（要件）が固まります。"
+          });
+        }
+
+        if (missingKeys.includes("metric")) {
+          qs.push({
+            title: "精度目標/KPIを決める",
+            q: isBoss
+              ? "精度の成功条件はどう置きますか？（空振りを何%減らす／取りこぼしを何%まで許容／上位何件提示など）"
+              : "現場感として「上位N件」だと何件くらいが回せますか？空振りの許容感はどれくらいですか？",
+            why: "PoCの評価がしやすくなり、合意形成が進みます。"
+          });
+        }
+
+        if (missingKeys.includes("poc")) {
+          qs.push({
+            title: "PoC範囲を決める",
+            q: "PoCはどの範囲でやりますか？（支店/期間/対象顧客/使うデータ期間/リーク注意点）",
+            why: "検証設計（実現性）を早めに詰められます。"
+          });
+        }
+
+        if (missingKeys.includes("stake")) {
+          qs.push({
+            title: "関係者・合意ポイント",
+            q: isBoss
+              ? "意思決定者は誰で、どの観点が合意できればGoになりますか？（費用/リスク/運用負荷/説明可能性など）"
+              : "この変更を現場で回す上で、誰の合意が必要ですか？反発が出そうな点はありますか？",
+            why: "導入の“詰まりどころ”を先に潰せます。"
+          });
+        }
+
+        // 優先度：課長なら目的/合意、現場なら現状/運用を前に
+        let ordered = qs;
+        if (isBoss) {
+          const order = ["目的を明確化する", "関係者・合意ポイント", "精度目標/KPIを決める", "PoC範囲を決める", "予測対象を定義する", "現状プロセスを把握する", "課題を言語化する"];
+          ordered = qs.sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title));
+        } else if (isA || isB) {
+          const order = ["現状プロセスを把握する", "課題を言語化する", "精度目標/KPIを決める", "予測対象を定義する", "PoC範囲を決める", "目的を明確化する", "関係者・合意ポイント"];
+          ordered = qs.sort((a, b) => order.indexOf(a.title) - order.indexOf(b.title));
+        }
+
+        return ordered.slice(0, 3);
+      }
+
+      function renderHint() {
+        const convText = getConversationText();
+        const missing = detectMissingCategories(convText);
+        const missingKeys = missing.map(m => m.key);
+
+        hintWho.textContent = currentPerson;
+        recentSnippet.innerHTML = latestSnippetText();
+
+        // chips
+        missingChips.innerHTML = "";
+        if (missing.length === 0) {
+          missingChips.innerHTML = `<span class="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-sm font-bold text-emerald-700">不足なし</span>`;
+          missingNote.textContent = "必要な観点は一通り出ています。次は“具体例”や“数値目標”を深掘りすると良さそうです。";
+        } else {
+          missing.forEach(m => {
+            const chip = document.createElement("span");
+            chip.className = "inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-sm font-bold text-amber-700";
+            chip.textContent = m.label;
+            missingChips.appendChild(chip);
+          });
+          missingNote.textContent = `不足が多い順に、まずは「${missing[0].label}」から聞くと進めやすいです。`;
+        }
+
+        // suggestions
+        const suggestions = questionBankFor(currentPerson, missingKeys.length ? missingKeys : ["metric", "poc"]);
+        hintBody.innerHTML = suggestions
+          .map((s, idx) => {
+            const safeQ = escapeHtml(s.q);
+            const safeWhy = escapeHtml(s.why);
+            const safeTitle = escapeHtml(s.title);
+            return `
+              <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div class="font-extrabold">${idx + 1}. ${safeTitle}</div>
+                    <div class="mt-2 text-slate-800 leading-relaxed text-sm">${safeQ}</div>
+                    <div class="mt-2 text-xs text-slate-500">理由：${safeWhy}</div>
+                  </div>
+                  <div class="shrink-0 flex flex-col gap-2">
+                    <button
+                      class="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-3 py-2 text-sm"
+                      type="button"
+                      onclick="insertHintToInput(${idx})"
+                    >
+                      入力欄に挿入
+                    </button>
+                    <button
+                      class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold px-3 py-2 text-sm"
+                      type="button"
+                      onclick="copyHint(${idx})"
+                    >
+                      コピー
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        // cache for insert/copy
+        window.__hintSuggestions = suggestions;
+
+        // badge
+        hintBadge.textContent = missing.length === 0 ? "OK" : `${missing.length}件`;
+      }
+
+      function updateHintBadge() {
+        const convText = getConversationText();
+        const missing = detectMissingCategories(convText);
+        hintBadge.textContent = missing.length === 0 ? "OK" : `${missing.length}件`;
+      }
+
+      function openHint() {
+        renderHint();
+        hintModal.classList.remove("hidden");
+      }
+      function closeHint() {
+        hintModal.classList.add("hidden");
+      }
+      function refreshHint() {
+        renderHint();
+      }
+
+      function insertHintToInput(idx) {
+        const s = (window.__hintSuggestions || [])[idx];
+        if (!s) return;
+        const text = s.q;
+
+        // 既存入力があれば追記
+        const current = ta.value.trim();
+        ta.value = current ? current + "\n" + text : text;
+        ta.focus();
+        ta.selectionStart = ta.selectionEnd = ta.value.length;
+        updateComposer();
+        closeHint();
+      }
+
+      async function copyHint(idx) {
+        const s = (window.__hintSuggestions || [])[idx];
+        if (!s) return;
+        try {
+          await navigator.clipboard.writeText(s.q);
+          alert("コピーしました");
+        } catch {
+          alert("コピーに失敗しました（環境によっては制限があります）");
+        }
+      }
+
+      window.openHint = openHint;
+      window.closeHint = closeHint;
+      window.refreshHint = refreshHint;
+      window.insertHintToInput = insertHintToInput;
+      window.copyHint = copyHint;
+
+      // -----------------------------
+      // Initial render: rebuild seed messages from stored `messages` if needed
+      // -----------------------------
+      function rebuildMessagesDomFromState() {
+        const container = document.getElementById("messages");
+        // clear
+        container.innerHTML = "";
+
+        // render all
+        for (const m of messages) {
+          if (m.role === "user") {
+            const w = document.createElement("div");
+            w.className = "flex items-start gap-4 justify-end";
+            w.innerHTML = `
+              <div class="flex-1 max-w-[760px]">
+                <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-sm">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="font-bold">ユーザー</div>
+                    <div class="text-xs text-slate-400">${escapeHtml(m.time || "")}</div>
+                  </div>
+                  <div class="mt-2 text-slate-800 leading-relaxed">${escapeHtml(m.text)}</div>
+                </div>
+              </div>
+              <div class="h-11 w-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow">ユ</div>
+            `;
+            container.appendChild(w);
+          } else {
+            const initial = m.speaker?.startsWith("個") ? "個" : (m.speaker?.includes("A") ? "A" : (m.speaker?.includes("B") ? "B" : "人"));
+            const w = document.createElement("div");
+            w.className = "flex items-start gap-4";
+            w.innerHTML = `
+              <div class="h-11 w-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                <span class="text-slate-700 font-bold">${escapeHtml(initial)}</span>
+              </div>
+              <div class="flex-1">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="font-bold">${escapeHtml(m.speaker || "相手")}</div>
+                    <div class="text-xs text-slate-400">${escapeHtml(m.time || "")}</div>
+                  </div>
+                  <div class="mt-2 text-slate-800 leading-relaxed">${escapeHtml(m.text)}</div>
+                </div>
+              </div>
+            `;
+            container.appendChild(w);
+          }
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      // rebuild based on storage
+      rebuildMessagesDomFromState();
+      updateHintBadge();
+
+      // also keep hearing log up to date
+      saveHearingLogToStorage();
     </script>
   </body>
 </html>
