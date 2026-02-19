@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Organizations - Prototype</title>
+    <style>
+      :root{
+        --bg:#f5f7fb;
+        --card:#fff;
+        --border:#e5e7eb;
+        --text:#111827;
+        --muted:#6b7280;
+        --shadow:0 10px 28px rgba(16,24,40,.12);
+        --dark:#2f2f2f;
+      }
+      *{box-sizing:border-box}
+      body{
+        margin:0;
+        font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+        color:var(--text);
+        background:var(--bg);
+      }
+
+      /* top bar */
+      header{
+        height:66px;
+        background:var(--dark);
+        color:#fff;
+        display:flex;
+        align-items:center;
+        padding:0 22px;
+        box-shadow:0 2px 12px rgba(0,0,0,.2);
+      }
+      .brand{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        font-weight:800;
+        letter-spacing:.2px;
+        font-size:26px;
+      }
+      .logoMark{
+        width:28px;height:28px;display:inline-block;
+        background:conic-gradient(from 200deg, #ffffff 0 25%, rgba(255,255,255,.55) 25% 55%, rgba(255,255,255,.25) 55% 100%);
+        clip-path: polygon(50% 5%, 95% 90%, 5% 90%);
+        transform: skewX(-6deg);
+      }
+
+      main{
+        max-width:1100px;
+        margin:0 auto;
+        padding:54px 18px 80px;
+      }
+      h1{
+        margin:0 0 26px;
+        font-size:34px;
+        font-weight:900;
+        letter-spacing:.2px;
+      }
+
+      .panel{
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:6px;
+        box-shadow:var(--shadow);
+        overflow:hidden;
+      }
+
+      .orgRow{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:20px;
+        padding:26px 28px;
+        border-top:1px solid var(--border);
+      }
+      .orgRow:first-child{ border-top:none; }
+
+      .orgTitle{
+        font-weight:900;
+        font-size:22px;
+        margin:0 0 6px;
+      }
+      .orgMeta{
+        color:var(--muted);
+        font-size:14px;
+      }
+
+      .selectBtn{
+        border:none;
+        background:transparent;
+        color:#111827;
+        font-weight:800;
+        cursor:pointer;
+        padding:12px 14px;
+        border-radius:8px;
+      }
+      .selectBtn:hover{
+        background:#f3f4f6;
+      }
+
+      .hint{
+        margin-top:14px;
+        color:var(--muted);
+        font-size:12px;
+      }
+
+      @media (max-width:720px){
+        h1{ font-size:28px; }
+        .orgRow{ flex-direction:column; align-items:flex-start; }
+        .selectBtn{ align-self:flex-end; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // auth guard (prototype)
+      if (localStorage.getItem("aas_logged_in") !== "1") {
+        // ルートのindex(=cloud_login)へ
+        window.location.href = "../index.html";
+      }
+    </script>
+
+    <header>
+      <div class="brand" aria-label="SIGNATE Cloud">
+        <span class="logoMark" aria-hidden="true"></span>
+        <span>Cloud</span>
+      </div>
+    </header>
+
+    <main>
+      <h1>組織の選択</h1>
+
+      <div class="panel">
+        <div class="orgRow">
+          <div>
+            <div class="orgTitle">株式会社SIGNATE</div>
+            <div class="orgMeta">フルパッケージライセンス：2020/01/01 〜 2028/01/20</div>
+          </div>
+          <button class="selectBtn" type="button" onclick="selectOrg('signate')">
+            この組織を選択する
+          </button>
+        </div>
+
+        <div class="orgRow">
+          <div>
+            <div class="orgTitle">SIGNATE（コンテンツ制作画面）</div>
+            <div class="orgMeta">テスト用プラン：2020/10/01 〜 2030/12/31</div>
+          </div>
+          <button class="selectBtn" type="button" onclick="selectOrg('content')">
+            この組織を選択する
+          </button>
+        </div>
+      </div>
+
+      <div class="hint">※プロトタイプ：選択すると prototype/index.html に遷移します。</div>
+    </main>
+
+    <script>
+      function selectOrg(key){
+        localStorage.setItem("aas_org", key);
+        window.location.href = "./index.html";
+      }
+    </script>
+  </body>
+</html>
