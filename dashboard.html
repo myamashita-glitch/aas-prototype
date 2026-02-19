@@ -13,6 +13,9 @@
       --muted:#6b7280;
       --shadow:0 10px 28px rgba(16,24,40,.12);
       --dark:#2f2f2f;
+      --blue:#2563eb;
+      --orange:#ee964b;
+      --green:#16a34a;
       --radius:10px;
     }
     *{box-sizing:border-box}
@@ -21,177 +24,157 @@
       font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
       color:var(--text);
       background:var(--bg);
-      font-size:14px;
+      font-size:14px; /* 他ページに合わせる */
     }
     a{color:inherit}
 
-    /* ===== Topbar (スクショ風) ===== */
-    .topbar{
-      height:60px;
-      background:#2f2f2f;
+    /* ===== header (スクショ風・Competitionなし) ===== */
+    header{
+      height:58px;
+      background:var(--dark);
       color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      box-shadow:0 2px 12px rgba(0,0,0,.2);
       position:sticky;
       top:0;
-      z-index:50;
-      box-shadow:0 2px 12px rgba(0,0,0,.25);
+      z-index:10;
     }
-    .topbar__inner{
-      height:100%;
-      max-width:1280px;
+    .headInner{
+      width:100%;
+      max-width:1200px;
       margin:0 auto;
-      padding:0 16px;
       display:flex;
       align-items:center;
-      gap:18px;
+      gap:14px;
     }
-
     .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      text-decoration:none;
-      color:#fff;
-      font-weight:900;
-      font-size:22px;
-      letter-spacing:.2px;
-      flex:0 0 auto;
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.2px; font-size:22px;
+      user-select:none;
+      white-space:nowrap;
     }
     .logoMark{
-      width:26px;height:26px;display:inline-block;
+      width:22px;height:22px;display:inline-block;
       background:conic-gradient(from 200deg, #ffffff 0 25%, rgba(255,255,255,.55) 25% 55%, rgba(255,255,255,.25) 55% 100%);
       clip-path: polygon(50% 5%, 95% 90%, 5% 90%);
       transform: skewX(-6deg);
     }
-    .brandText{ transform:translateY(1px); }
 
-    .gnav{
+    .topNav{
       display:flex;
       align-items:center;
-      gap:14px;
-      min-width:0;
-      flex:1 1 auto;
-      overflow:hidden;
+      gap:2px;
+      margin-left:10px;
+      flex:1;
+      overflow:auto;
+      scrollbar-width:thin;
     }
-    .gnav__item{
+    .topNav a{
+      text-decoration:none;
+      padding:10px 12px;
+      border-radius:10px;
+      font-weight:800;
+      font-size:13px;
+      opacity:.95;
+      white-space:nowrap;
       display:inline-flex;
       align-items:center;
       gap:8px;
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      font-size:14px;
-      padding:8px 10px;
-      border-radius:10px;
-      white-space:nowrap;
-      border:1px solid transparent;
-      opacity:.95;
     }
-    .gnav__item:hover{
-      background:rgba(255,255,255,.08);
-      border-color:rgba(255,255,255,.08);
+    .topNav a:hover{ background:rgba(255,255,255,.08); }
+    .topNav a.active{
+      background:rgba(255,255,255,.12);
+      outline:1px solid rgba(255,255,255,.10);
     }
-    .gnav__icon{ font-size:15px; opacity:.95; }
+    .navIcon{
+      width:16px;height:16px;display:inline-block;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.2));
+    }
 
-    .utils{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex:0 0 auto;
-    }
-    .utils__link{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      font-size:14px;
-      padding:8px 10px;
-      border-radius:10px;
-      opacity:.95;
-      white-space:nowrap;
-    }
-    .utils__link:hover{ background:rgba(255,255,255,.08); }
-
-    .iconBtn{
-      width:40px;
-      height:40px;
-      border:none;
-      border-radius:12px;
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      cursor:pointer;
-      font-size:18px;
-    }
-    .iconBtn:hover{ background:rgba(255,255,255,.14); }
-
-    .userMenu{ position:relative; }
-    .userBtn{
+    .rightTools{
       display:flex;
       align-items:center;
       gap:10px;
-      border:none;
-      cursor:pointer;
-      padding:8px 10px;
-      border-radius:12px;
-      background:rgba(255,255,255,.08);
-      color:#fff;
+      white-space:nowrap;
+    }
+    .toolLink{
+      text-decoration:none;
       font-weight:900;
-      font-size:14px;
-    }
-    .userBtn:hover{ background:rgba(255,255,255,.14); }
-    .userAvatar{
-      width:26px;height:26px;
-      display:grid;place-items:center;
+      opacity:.95;
+      padding:10px 10px;
       border-radius:10px;
-      background:rgba(255,255,255,.12);
-      font-size:14px;
+      font-size:13px;
     }
-    .caret{ opacity:.9; }
+    .toolLink:hover{ background:rgba(255,255,255,.08); }
 
+    .pillUser{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+    }
+    .userAvatar{
+      width:26px;height:26px;border-radius:10px;
+      background:linear-gradient(135deg,#a78bfa,#60a5fa);
+      display:grid;place-items:center;
+      font-weight:900;
+    }
+    .dropdown{ position:relative; }
     .menu{
       position:absolute;
       right:0;
-      top:46px;
-      min-width:180px;
+      top:44px;
+      width:220px;
       background:#fff;
-      color:#111827;
-      border:1px solid #e5e7eb;
-      border-radius:12px;
-      box-shadow:0 18px 40px rgba(16,24,40,.18);
-      padding:6px;
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:8px;
       display:none;
     }
-    .menu.open{ display:block; }
-    .menu button{
+    .menu a, .menu button{
       width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:12px;
+      text-decoration:none;
       border:none;
       background:transparent;
-      text-align:left;
-      padding:10px 10px;
-      border-radius:10px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
-      color:#111827;
+      color:var(--text);
+      font-size:13px;
     }
-    .menu button:hover{ background:#f3f4f6; }
+    .menu a:hover, .menu button:hover{ background:#f3f4f6; }
+    .menu .muted{ font-size:12px; color:var(--muted); font-weight:800; padding:8px 10px 2px; }
 
-    @media (max-width: 960px){
-      .gnav{ display:none; }
-    }
-
-    /* ===== Page layout ===== */
+    /* ===== main ===== */
     .page{
       max-width:1200px;
       margin:0 auto;
       padding:22px 16px 60px;
     }
+
     .layout{
       display:grid;
       grid-template-columns: 1fr 320px;
       gap:18px;
       align-items:start;
     }
+
     .card{
       background:var(--card);
       border:1px solid var(--border);
@@ -201,13 +184,18 @@
     .cardPad{ padding:16px 16px; }
     .muted{ color:var(--muted); }
 
+    /* top summary area */
     .summaryGrid{
       display:grid;
       grid-template-columns: 280px 1fr;
       gap:14px;
       margin-bottom:14px;
     }
-    .profile{ display:flex; gap:12px; align-items:center; }
+    .profile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
     .avatar{
       width:48px;height:48px;border-radius:14px;
       background:linear-gradient(135deg, #a78bfa, #60a5fa);
@@ -216,7 +204,6 @@
     }
     .name{ font-weight:900; font-size:16px; }
     .lv{ color:#f59e0b; font-weight:900; margin-top:2px; }
-
     .kvRow{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
@@ -231,8 +218,15 @@
     .kv .label{ color:var(--muted); font-size:12px; font-weight:700; }
     .kv .val{ font-size:18px; font-weight:900; margin-top:4px; }
 
-    .sectionTitle{ font-size:16px; font-weight:900; margin:0 0 10px; }
-    .list{ display:flex; flex-direction:column; gap:10px; }
+    /* main list */
+    .sectionTitle{
+      font-size:16px;
+      font-weight:900;
+      margin:0 0 10px;
+    }
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+    }
     .courseCard{
       border:1px solid var(--border);
       border-radius:12px;
@@ -246,7 +240,10 @@
     .courseHead{
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
     }
-    .courseTitle{ font-weight:900; font-size:14px; line-height:1.4; }
+    .courseTitle{
+      font-weight:900; font-size:14px;
+      line-height:1.4;
+    }
     .pill{
       display:inline-flex; align-items:center; gap:6px;
       border-radius:999px;
@@ -267,9 +264,14 @@
     }
     .metaRow span{ display:inline-flex; align-items:center; gap:6px; }
 
+    /* sidebar */
     .sideStack{ display:flex; flex-direction:column; gap:12px; }
-    .sideTitle{ font-weight:900; font-size:14px; margin:0 0 8px; display:flex; align-items:center; gap:8px; }
-
+    .sideTitle{
+      font-weight:900;
+      font-size:14px;
+      margin:0 0 8px;
+      display:flex; align-items:center; gap:8px;
+    }
     .badgeBox{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
@@ -288,7 +290,6 @@
       text-align:center;
       padding:8px;
     }
-
     .btn{
       width:100%;
       height:44px;
@@ -298,10 +299,10 @@
       cursor:pointer;
       display:flex; align-items:center; justify-content:center;
       gap:10px;
-      background:#2f2f2f;
-      color:#fff;
+      font-size:13px;
     }
-    .btn:hover{ opacity:.92; }
+    .btnPrimary{ background:var(--dark); color:#fff; }
+    .btnPrimary:hover{ opacity:.92; }
 
     .calGrid{
       display:grid;
@@ -319,14 +320,25 @@
       display:flex; align-items:center; justify-content:space-between;
       font-weight:900;
       margin-top:6px;
+      font-size:12px;
     }
-    .miniBarRow{ display:flex; align-items:end; gap:6px; margin-top:10px; }
-    .miniBar{ width:10px; border-radius:6px; background:#93c5fd; }
+    .miniBarRow{
+      display:flex; align-items:end; gap:6px; margin-top:10px;
+    }
+    .miniBar{
+      width:10px; border-radius:6px;
+      background:#93c5fd;
+    }
 
+    /* responsive */
     @media (max-width: 980px){
       .layout{ grid-template-columns:1fr; }
       .summaryGrid{ grid-template-columns:1fr; }
       .kvRow{ grid-template-columns: repeat(2, 1fr); }
+      .rightTools{ display:none; } /* スマホは右側を畳む */
+      header{ height:auto; padding:10px 12px; }
+      .headInner{ flex-wrap:wrap; }
+      .topNav{ width:100%; margin-left:0; }
     }
   </style>
 </head>
@@ -342,57 +354,61 @@
     }
   </script>
 
-  <header class="topbar">
-    <div class="topbar__inner">
-      <a class="brand" href="./dashboard.html" aria-label="SIGNATE Cloud">
+  <header>
+    <div class="headInner">
+      <div class="brand" aria-label="SIGNATE Cloud">
         <span class="logoMark" aria-hidden="true"></span>
-        <span class="brandText">Cloud</span>
-      </a>
+        <span>Cloud</span>
+      </div>
 
-      <nav class="gnav" aria-label="Global navigation">
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Program');return false;">
-          <span class="gnav__icon">🎓</span><span>Program</span>
+      <nav class="topNav" aria-label="Top Navigation">
+        <a href="./dashboard.html" class="active">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M4 19V5'/%3E%3Cpath d='M4 5h16'/%3E%3Cpath d='M8 9h8'/%3E%3Cpath d='M8 13h6'/%3E%3C/svg%3E%0A">
+          <span>Program</span>
         </a>
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Assessment');return false;">
-          <span class="gnav__icon">📝</span><span>Assessment</span>
+
+        <a href="./dashboard.html">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M9 11l3 3L22 4'/%3E%3Cpath d='M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'/%3E%3C/svg%3E%0A">
+          <span>Assessment</span>
         </a>
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Course');return false;">
-          <span class="gnav__icon">📚</span><span>Course</span>
+
+        <a href="./dashboard.html">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2Z'/%3E%3C/svg%3E%0A">
+          <span>Course</span>
         </a>
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Quest');return false;">
-          <span class="gnav__icon">🏁</span><span>Quest</span>
+
+        <!-- ✅ Quest は quest.html へ遷移 -->
+        <a href="./quest.html">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M8 21h8'/%3E%3Cpath d='M12 17v4'/%3E%3Cpath d='M7 4h10'/%3E%3Cpath d='M6 8a6 6 0 0 1 12 0c0 2.2-1.2 4-3 5l-1 1H10l-1-1c-1.8-1-3-2.8-3-5Z'/%3E%3C/svg%3E%0A">
+          <span>Quest</span>
         </a>
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Gym');return false;">
-          <span class="gnav__icon">🏋️</span><span>Gym</span>
+
+        <a href="./dashboard.html">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='M6 6l12 12'/%3E%3C/svg%3E%0A">
+          <span>Gym</span>
         </a>
-        <a class="gnav__item" href="#" onclick="alert('Prototype: Discussion');return false;">
-          <span class="gnav__icon">💬</span><span>Discussion</span>
+
+        <a href="./dashboard.html">
+          <img class="navIcon" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z'/%3E%3C/svg%3E%0A">
+          <span>Discussion</span>
         </a>
       </nav>
 
-      <div class="utils">
-        <a class="utils__link" href="#" onclick="alert('Prototype: 使い方');return false;">
-          ℹ️ <span>使い方</span>
-        </a>
-        <a class="utils__link" href="#" onclick="alert('Prototype: お問い合わせ');return false;">
-          ❓ <span>お問い合わせ</span>
-        </a>
+      <div class="rightTools">
+        <a class="toolLink" href="#" onclick="alert('プロトタイプ：使い方は未実装です');return false;">使い方</a>
+        <a class="toolLink" href="#" onclick="alert('プロトタイプ：お問い合わせは未実装です');return false;">お問い合わせ</a>
 
-        <button class="iconBtn" type="button" aria-label="通知" onclick="alert('Prototype: 通知');">
-          🔔
-        </button>
-
-        <div class="userMenu">
-          <button class="userBtn" type="button" id="userMenuBtn" aria-haspopup="menu" aria-expanded="false">
-            <span class="userAvatar" aria-hidden="true">👤</span>
-            <span class="userLv">レベル.1</span>
-            <span class="caret" aria-hidden="true">▾</span>
-          </button>
-
+        <div class="dropdown">
+          <div class="pillUser" id="userPill" role="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="userAvatar" id="userInitial">M</span>
+            <span id="userLevel">レベル.1</span>
+            <span style="opacity:.9;">▾</span>
+          </div>
           <div class="menu" id="userMenu" role="menu" aria-label="User menu">
-            <button role="menuitem" type="button" onclick="alert('Prototype: 受験結果');">受験結果</button>
-            <button role="menuitem" type="button" onclick="alert('Prototype: 管理画面');">管理画面</button>
-            <button role="menuitem" type="button" id="logoutBtnMenu">ログアウト</button>
+            <div class="muted">プロトタイプ</div>
+            <a href="./prototype/results.html" role="menuitem" onclick="alert('プロトタイプ：受験結果は後で接続します');return false;">受験結果</a>
+            <a href="./prototype/admin.html" role="menuitem" onclick="alert('プロトタイプ：管理画面は未実装です');return false;">管理画面</a>
+            <button type="button" role="menuitem" id="logoutBtn">ログアウト</button>
           </div>
         </div>
       </div>
@@ -565,7 +581,7 @@
           </div>
 
           <div style="margin-top:12px;">
-            <button class="btn" type="button" onclick="alert('プロトタイプ：テストは未実装です')">テストを受ける</button>
+            <button class="btn btnPrimary" type="button" onclick="alert('プロトタイプ：テストは未実装です')">テストを受ける</button>
           </div>
         </div>
 
@@ -575,7 +591,7 @@
             ブックマークしたコンテンツが表示されます。
           </div>
           <div style="margin-top:10px;">
-            <button class="btn" type="button" onclick="alert('プロトタイプ：ブックマークは未実装です')">ブックマーク一覧</button>
+            <button class="btn btnPrimary" type="button" onclick="alert('プロトタイプ：ブックマークは未実装です')">ブックマーク一覧</button>
           </div>
         </div>
 
@@ -611,36 +627,40 @@
     // 表示名（プロトタイプ）
     const email = localStorage.getItem("aas_user_email") || "";
     if (email) {
-      const el = document.getElementById("userName");
-      if (el) el.textContent = email;
+      document.getElementById("userName").textContent = email;
     }
 
-    // user dropdown
-    (function(){
-      const btn = document.getElementById("userMenuBtn");
-      const menu = document.getElementById("userMenu");
-      const logout = document.getElementById("logoutBtnMenu");
-      if (!btn || !menu) return;
+    // user pill initial
+    const initial = (email.trim()[0] || "M").toUpperCase();
+    const elInit = document.getElementById("userInitial");
+    if (elInit) elInit.textContent = initial;
 
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const open = menu.classList.toggle("open");
-        btn.setAttribute("aria-expanded", open ? "true" : "false");
-      });
+    // dropdown
+    const pill = document.getElementById("userPill");
+    const menu = document.getElementById("userMenu");
+    function closeMenu(){
+      if (!menu) return;
+      menu.style.display = "none";
+      pill?.setAttribute("aria-expanded","false");
+    }
+    pill?.addEventListener("click", () => {
+      if (!menu) return;
+      const open = menu.style.display === "block";
+      menu.style.display = open ? "none" : "block";
+      pill.setAttribute("aria-expanded", open ? "false" : "true");
+    });
+    document.addEventListener("click", (e) => {
+      if (!menu || !pill) return;
+      if (!menu.contains(e.target) && !pill.contains(e.target)) closeMenu();
+    });
 
-      document.addEventListener("click", () => {
-        menu.classList.remove("open");
-        btn.setAttribute("aria-expanded", "false");
-      });
-
-      logout?.addEventListener("click", () => {
-        localStorage.removeItem("aas_logged_in");
-        localStorage.removeItem("aas_org");
-        localStorage.removeItem("aas_user_email");
-        localStorage.removeItem("aas_remember");
-        location.href = "./index.html";
-      });
-    })();
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("aas_logged_in");
+      localStorage.removeItem("aas_org");
+      localStorage.removeItem("aas_user_email");
+      localStorage.removeItem("aas_remember");
+      location.href = "./index.html";
+    });
   </script>
 </body>
 </html>
