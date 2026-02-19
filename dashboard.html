@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Prototype</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --text:#111827;
+      --muted:#6b7280;
+      --shadow:0 10px 28px rgba(16,24,40,.12);
+      --dark:#2f2f2f;
+      --blue:#2563eb;
+      --orange:#ee964b;
+      --green:#16a34a;
+      --radius:10px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      font-size:14px; /* 他ページに合わせる */
+    }
+    a{color:inherit}
+    header{
+      height:66px;
+      background:var(--dark);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 22px;
+      box-shadow:0 2px 12px rgba(0,0,0,.2);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:800; letter-spacing:.2px; font-size:26px;
+    }
+    .logoMark{
+      width:28px;height:28px;display:inline-block;
+      background:conic-gradient(from 200deg, #ffffff 0 25%, rgba(255,255,255,.55) 25% 55%, rgba(255,255,255,.25) 55% 100%);
+      clip-path: polygon(50% 5%, 95% 90%, 5% 90%);
+      transform: skewX(-6deg);
+    }
+    .topNav{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:18px;
+      font-weight:700;
+      font-size:14px;
+      opacity:.95;
+    }
+    .topNav a{
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:8px;
+    }
+    .topNav a:hover{ background:rgba(255,255,255,.08); }
+    .topNav button{
+      border:none;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font-weight:800;
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .topNav button:hover{ background:rgba(255,255,255,.14); }
+
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:22px 16px 60px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:18px;
+      align-items:start;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .cardPad{ padding:16px 16px; }
+    .muted{ color:var(--muted); }
+
+    /* top summary area */
+    .summaryGrid{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+    .profile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .avatar{
+      width:48px;height:48px;border-radius:14px;
+      background:linear-gradient(135deg, #a78bfa, #60a5fa);
+      display:grid; place-items:center;
+      color:#fff; font-weight:900;
+    }
+    .name{ font-weight:900; font-size:16px; }
+    .lv{ color:#f59e0b; font-weight:900; margin-top:2px; }
+    .kvRow{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:8px;
+    }
+    .kv{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px;
+      text-align:center;
+    }
+    .kv .label{ color:var(--muted); font-size:12px; font-weight:700; }
+    .kv .val{ font-size:18px; font-weight:900; margin-top:4px; }
+
+    /* main list */
+    .sectionTitle{
+      font-size:16px;
+      font-weight:900;
+      margin:0 0 10px;
+    }
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .courseCard{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px 14px;
+      background:#fff;
+    }
+    .courseCard:hover{
+      border-color:#c7d2fe;
+      box-shadow:0 10px 26px rgba(37,99,235,.08);
+    }
+    .courseHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .courseTitle{
+      font-weight:900; font-size:14px;
+      line-height:1.4;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:900;
+      border:1px solid var(--border);
+      color:#111827;
+      background:#f9fafb;
+      white-space:nowrap;
+    }
+    .metaRow{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .metaRow span{ display:inline-flex; align-items:center; gap:6px; }
+
+    /* sidebar */
+    .sideStack{ display:flex; flex-direction:column; gap:12px; }
+    .sideTitle{
+      font-weight:900;
+      font-size:14px;
+      margin:0 0 8px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .badgeBox{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#f9fafb;
+    }
+    .badgeCircle{
+      width:64px;height:64px;border-radius:999px;
+      border:2px solid #d1d5db;
+      display:grid; place-items:center;
+      color:#9ca3af;
+      font-weight:900;
+      font-size:11px;
+      text-align:center;
+      padding:8px;
+    }
+    .btn{
+      width:100%;
+      height:44px;
+      border:none;
+      border-radius:12px;
+      font-weight:900;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      gap:10px;
+    }
+    .btnPrimary{ background:var(--dark); color:#fff; }
+    .btnPrimary:hover{ opacity:.92; }
+
+    .calGrid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:6px;
+      margin-top:8px;
+    }
+    .calCell{
+      height:28px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+    }
+    .calHead{
+      display:flex; align-items:center; justify-content:space-between;
+      font-weight:900;
+      margin-top:6px;
+    }
+    .miniBarRow{
+      display:flex; align-items:end; gap:6px; margin-top:10px;
+    }
+    .miniBar{
+      width:10px; border-radius:6px;
+      background:#93c5fd;
+    }
+
+    /* responsive */
+    @media (max-width: 980px){
+      .layout{ grid-template-columns:1fr; }
+      .summaryGrid{ grid-template-columns:1fr; }
+      .kvRow{ grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // auth guard（未ログインならログインへ）
+    if (localStorage.getItem("aas_logged_in") !== "1") {
+      location.replace("./index.html");
+    }
+    // ついでに org 未選択なら organizations へ
+    if (!localStorage.getItem("aas_org")) {
+      location.replace("./organizations.html");
+    }
+  </script>
+
+  <header>
+    <div class="brand" aria-label="SIGNATE Cloud">
+      <span class="logoMark" aria-hidden="true"></span>
+      <span>Cloud</span>
+    </div>
+
+    <nav class="topNav" aria-label="Top Navigation">
+      <a href="./prototype/results.html" onclick="alert('プロトタイプ：受験結果は後で接続します');return false;">受験結果</a>
+      <a href="./prototype/admin.html" onclick="alert('プロトタイプ：管理画面は未実装です');return false;">管理画面</a>
+      <button type="button" id="logoutBtn">ログアウト</button>
+    </nav>
+  </header>
+
+  <div class="page">
+    <div class="layout">
+      <!-- Main -->
+      <div>
+        <div class="summaryGrid">
+          <div class="card cardPad">
+            <div class="profile">
+              <div class="avatar">M</div>
+              <div>
+                <div class="name" id="userName">Masa Yamashita</div>
+                <div class="lv">Lv.1</div>
+                <div class="muted" style="font-size:12px; font-weight:700; margin-top:6px;">
+                  経験値Exp：0
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card cardPad">
+            <div class="kvRow">
+              <div class="kv">
+                <div class="label">総学習レポート</div>
+                <div class="val">0</div>
+                <div class="muted" style="font-size:12px;font-weight:700;margin-top:2px;">修了コース数</div>
+              </div>
+              <div class="kv">
+                <div class="label">学習ログ</div>
+                <div class="val">0</div>
+                <div class="muted" style="font-size:12px;font-weight:700;margin-top:2px;">受講済み講座数</div>
+              </div>
+              <div class="kv">
+                <div class="label">リフレクション</div>
+                <div class="val">0</div>
+                <div class="muted" style="font-size:12px;font-weight:700;margin-top:2px;">件</div>
+              </div>
+              <div class="kv">
+                <div class="label">学習時間</div>
+                <div class="val">0.0h</div>
+                <div class="muted" style="font-size:12px;font-weight:700;margin-top:2px;">合計</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cardPad" style="margin-bottom:14px;">
+          <div class="sectionTitle">生成AI活用コース</div>
+          <div class="muted" style="font-size:12px;font-weight:700;margin-bottom:10px;">
+            生成AIを「使っている」から「使いこなせる」人へ。AIとの対話で自己の業務課題を明確化し、AIによる生産性向上を体験します。
+          </div>
+
+          <div class="list">
+            <div class="courseCard">
+              <div class="courseHead">
+                <div>
+                  <div class="courseTitle">生成AI活用コース AIとの対話編　Level 1：リテラシーを身につける</div>
+                  <div class="muted" style="font-size:12px;font-weight:700;margin-top:6px;">
+                    AIへの基本的な問いかけ方／指示の出し方／プロンプト設計の基礎。
+                  </div>
+                </div>
+                <span class="pill">➜</span>
+              </div>
+              <div class="metaRow">
+                <span>🧩 10 Gym</span><span>📝 1 Reflection</span><span>⏱ 9.5時間</span><span>✨ 2,850 Exp</span>
+              </div>
+            </div>
+
+            <div class="courseCard">
+              <div class="courseHead">
+                <div>
+                  <div class="courseTitle">生成AI活用コース AIとの対話編　Level 2：業務の切替を引き出す</div>
+                  <div class="muted" style="font-size:12px;font-weight:700;margin-top:6px;">
+                    業務の“前提”を言語化し、AIに意図と条件を伝える練習。
+                  </div>
+                </div>
+                <span class="pill">➜</span>
+              </div>
+              <div class="metaRow">
+                <span>🧩 8 Gym</span><span>📝 1 Reflection</span><span>⏱ 10.1時間</span><span>✨ 4,450 Exp</span>
+              </div>
+            </div>
+
+            <div class="courseCard">
+              <div class="courseHead">
+                <div>
+                  <div class="courseTitle">生成AI活用コース AIとの対話編　Level 3：アウトプットの質を上げる</div>
+                  <div class="muted" style="font-size:12px;font-weight:700;margin-top:6px;">
+                    構成／根拠／比較の観点で、AIの出力をレビュー・改善する。
+                  </div>
+                </div>
+                <span class="pill">➜</span>
+              </div>
+              <div class="metaRow">
+                <span>🧩 9 Gym</span><span>📝 1 Reflection</span><span>⏱ 10.0時間</span><span>✨ 4,150 Exp</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cardPad">
+          <div class="sectionTitle">コース</div>
+          <div class="list">
+            <div class="courseCard">
+              <div class="courseHead">
+                <div>
+                  <div class="courseTitle">【例】生成AI活用コース AIとの対話編　Level 2：業務適用の答えを引き出す</div>
+                  <div class="muted" style="font-size:12px;font-weight:700;margin-top:6px;">
+                    業務に沿った問いの立て方と、具体条件の整理を行います。
+                  </div>
+                </div>
+                <span class="pill">➜</span>
+              </div>
+              <div class="metaRow">
+                <span>🧩 8 Gym</span><span>📝 1 Reflection</span><span>⏱ 10.1時間</span><span>✨ 4,350 Exp</span>
+              </div>
+            </div>
+
+            <div class="courseCard">
+              <div class="courseHead">
+                <div>
+                  <div class="courseTitle">【例】生成AI活用コース AIとの対話編　Level 3：アウトプットの質を上げる</div>
+                  <div class="muted" style="font-size:12px;font-weight:700;margin-top:6px;">
+                    出力を検証し、改善サイクルを回すための型を身につけます。
+                  </div>
+                </div>
+                <span class="pill">➜</span>
+              </div>
+              <div class="metaRow">
+                <span>🧩 1 Quest</span><span>🧩 10 Gym</span><span>📝 1 Reflection</span><span>⏱ 14.3時間</span><span>✨ 8,800 Exp</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+            <a class="muted" href="#" onclick="alert('プロトタイプ：一覧は未実装です');return false;" style="font-size:12px;font-weight:900;text-decoration:none;">
+              すべてのコースを見る
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sideStack">
+        <div class="card cardPad">
+          <div class="sideTitle">ご契約情報</div>
+          <div class="muted" style="font-size:12px;font-weight:800;line-height:1.8;">
+            ご契約開始日　<span style="float:right;color:#111827;">2020/10/01</span><br/>
+            ご契約終了日　<span style="float:right;color:#111827;">2030/12/31</span>
+          </div>
+        </div>
+
+        <div class="card cardPad">
+          <div class="sideTitle">SIGNATE Certifications</div>
+          <div class="badgeBox">
+            <div>
+              <div style="font-weight:900;">認定ステータス</div>
+              <div class="muted" style="font-size:12px;font-weight:800;margin-top:6px;">データがありません</div>
+            </div>
+            <div class="badgeCircle">SIGNATE<br/>No<br/>Certified</div>
+          </div>
+
+          <div style="margin-top:10px;" class="muted">
+            データ活用スキル：未受検<br/>
+            データ活用マインド：未受検
+          </div>
+
+          <div style="margin-top:12px;">
+            <button class="btn btnPrimary" type="button" onclick="alert('プロトタイプ：テストは未実装です')">テストを受ける</button>
+          </div>
+        </div>
+
+        <div class="card cardPad">
+          <div class="sideTitle">ブックマーク</div>
+          <div class="muted" style="font-size:12px;font-weight:800;line-height:1.7;">
+            ブックマークしたコンテンツが表示されます。
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn btnPrimary" type="button" onclick="alert('プロトタイプ：ブックマークは未実装です')">ブックマーク一覧</button>
+          </div>
+        </div>
+
+        <div class="card cardPad">
+          <div class="sideTitle">学習カレンダー</div>
+          <div class="calHead">
+            <span>日　月　火　水　木　金　土</span>
+            <span class="muted" style="font-size:12px;">2026年02月</span>
+          </div>
+          <div class="calGrid" aria-label="calendar">
+            <!-- ざっくり見た目用 -->
+            <div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div>
+            <div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div>
+            <div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div>
+            <div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div><div class="calCell"></div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:end;margin-top:10px;">
+            <div class="muted" style="font-size:12px;font-weight:900;">少ない</div>
+            <div class="miniBarRow" aria-label="learning intensity">
+              <div class="miniBar" style="height:10px;"></div>
+              <div class="miniBar" style="height:16px;"></div>
+              <div class="miniBar" style="height:24px;"></div>
+              <div class="miniBar" style="height:32px;"></div>
+            </div>
+            <div class="muted" style="font-size:12px;font-weight:900;">多い</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // 表示名（プロトタイプ）
+    const email = localStorage.getItem("aas_user_email") || "";
+    if (email) {
+      document.getElementById("userName").textContent = email;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      // 必要ならキー追加で消してOK
+      localStorage.removeItem("aas_logged_in");
+      localStorage.removeItem("aas_org");
+      localStorage.removeItem("aas_user_email");
+      localStorage.removeItem("aas_remember");
+      location.href = "./index.html";
+    });
+  </script>
+</body>
+</html>
