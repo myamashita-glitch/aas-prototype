@@ -258,6 +258,26 @@
       opacity:.95;
     }
 
+    /* Hero内の「こちら」リンクをボタン風に */
+    .linkBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 12px;
+      border-radius:999px;
+      margin:0 4px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.22);
+      color:#fff;
+      font-weight:900;
+      text-decoration:none;
+      transform:translateY(-1px);
+    }
+    .linkBtn:hover{
+      background:rgba(255,255,255,.20);
+      border-color:rgba(255,255,255,.28);
+    }
+
     /* ===== Main ===== */
     .main{
       padding:18px 0 60px;
@@ -296,6 +316,52 @@
       box-shadow:var(--shadow);
     }
     .pad{ padding:14px; }
+
+    /* ===== 追加：デモ用_はじめにカード ===== */
+    .introHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .introTitle{
+      font-weight:900;
+      font-size:14px;
+      margin:0;
+    }
+    .introXp{
+      font-weight:900;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .introDesc{
+      margin:8px 0 12px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      line-height:1.7;
+    }
+    .introActions{
+      display:flex;
+      justify-content:center;
+    }
+    .introPlayBtn{
+      height:38px;
+      min-width:260px;
+      padding:0 16px;
+      border-radius:12px;
+    }
+    .introArrow{
+      display:flex;
+      justify-content:center;
+      margin:-2px 0 8px;
+      opacity:.8;
+    }
+    .introArrow svg{
+      width:18px;height:18px;
+      color:#94a3b8;
+    }
 
     /* Missions */
     .mission{
@@ -647,7 +713,8 @@
   <main class="main">
     <div class="container">
       <div class="tabs" role="tablist" aria-label="Quest tabs">
-        <button class="tab active" data-tab="mission" role="tab" aria-selected="true">Mission</button>
+        <!-- ここを Mission → 講座 に変更 -->
+        <button class="tab active" data-tab="mission" role="tab" aria-selected="true">講座</button>
         <button class="tab" data-tab="discussion" role="tab" aria-selected="false">ディスカッション</button>
       </div>
 
@@ -667,6 +734,25 @@
                   ⬇︎ ダウンロード
                 </button>
               </div>
+            </div>
+
+            <!-- ★追加：デモ用_はじめに（DownloadとMission 1の間） -->
+            <div class="card pad" style="margin-bottom:10px;">
+              <div class="introHead">
+                <div class="introTitle">デモ用_はじめに</div>
+                <div class="introXp">50 Exp</div>
+              </div>
+              <div class="introDesc">本講座のゴール、講座の流れをご紹介します。</div>
+              <div class="introActions">
+                <button class="btn btnOrange introPlayBtn" type="button" onclick="alert('プロトタイプ：Video再生は未実装です');">
+                  ▶ Videoを再生する
+                </button>
+              </div>
+            </div>
+            <div class="introArrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
             </div>
 
             <!-- Mission 1 -->
