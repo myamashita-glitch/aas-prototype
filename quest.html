@@ -21,7 +21,9 @@
       --orangeHover:#e88736;
 
       --blue:#2563eb;
+      --blue2:#1d4ed8;
 
+      --radius:12px;
       --radius2:16px;
     }
     *{box-sizing:border-box}
@@ -104,7 +106,6 @@
       width:16px;height:16px;display:inline-block;
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.2));
     }
-
     .rightTools{
       display:flex;
       align-items:center;
@@ -119,7 +120,6 @@
       border-radius:10px;
     }
     .toolLink:hover{ background:rgba(255,255,255,.08); }
-
     .pillUser{
       display:inline-flex;
       align-items:center;
@@ -294,11 +294,12 @@
       border-bottom-color:var(--orange);
     }
 
-    /* ★ 右カラムを消すので1カラム化 */
     .layout{
-      display:block;
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:16px;
+      align-items:start;
     }
-
     .card{
       background:var(--card);
       border:1px solid var(--border);
@@ -324,7 +325,6 @@
       font-weight:800;
       font-size:12px;
       line-height:1.7;
-      max-width: 980px;
     }
     .introXp{
       font-weight:900;
@@ -339,7 +339,7 @@
       margin-top:12px;
     }
     .btnWide{
-      min-width:280px;
+      min-width:240px;
       height:38px;
       border-radius:10px;
     }
@@ -397,7 +397,6 @@
       display:block;
     }
     .mission[data-open="false"] .mBody{ display:none; }
-
     .taskRow{
       display:flex;
       align-items:center;
@@ -432,7 +431,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width:860px; /* 1カラム化で少し広げる */
+      max-width:680px;
     }
     .tMeta{
       display:flex;
@@ -478,6 +477,42 @@
     }
     .btnGhost:hover{ background:#f9fafb; }
 
+    /* Sidebar */
+    .sideStack{ display:flex; flex-direction:column; gap:12px; }
+    .sideTitle{
+      font-weight:900;
+      font-size:14px;
+      margin:0 0 10px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .ring{
+      width:112px;height:112px;border-radius:999px;
+      background:conic-gradient(var(--blue) 0deg, rgba(37,99,235,.18) 0deg);
+      display:grid; place-items:center;
+      margin:10px auto 8px;
+      position:relative;
+    }
+    .ring:after{
+      content:"";
+      width:86px;height:86px;border-radius:999px;
+      background:#fff;
+      position:absolute;
+      inset:auto;
+    }
+    .ringInner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      font-weight:900;
+    }
+    .ringInner .pct{ font-size:18px; color:#111827; }
+    .ringInner .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+
+    /* Footer hint */
     .hintBar{
       margin-top:12px;
       color:var(--muted);
@@ -487,7 +522,7 @@
 
     /* Responsive */
     @media (max-width: 980px){
-      .heroGrid{ grid-template-columns:1fr; }
+      .heroGrid, .layout{ grid-template-columns:1fr; }
       .rightTools{ display:none; }
       header{ height:auto; padding:10px 12px; }
       .headInner{ flex-wrap:wrap; }
@@ -589,18 +624,16 @@
             <span class="tag">✅ 0 Tasks</span>
           </div>
 
+          <!-- 変更点1：案2に差し替え -->
           <p class="heroSub">
-            ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
-            ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
-            まずは
+            Mission1 AIロールプレイ<br>
+            （案２）
             <a class="linkBtn"
                href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com/"
                target="_blank"
-               rel="noopener noreferrer">
-              こちら
-            </a>
+               rel="noopener noreferrer">こちら</a>
             にアクセスし、各登場人物にインタビューをしましょう。<br>
-            （※プロトタイプ：実データや提出は未接続です）
+            各登場人物にインタビューしましょう
           </p>
         </div>
 
@@ -627,6 +660,7 @@
       </div>
 
       <div class="layout">
+        <!-- left/main -->
         <section>
           <div id="tab-mission">
             <div class="card pad" style="margin-bottom:12px;">
@@ -677,22 +711,7 @@
               </div>
 
               <div class="mBody">
-                <div class="taskRow">
-                  <div class="taskLeft">
-                    <span class="tType">Video 1</span>
-                    <div style="min-width:0;">
-                      <div class="tTitle">分析の目的を整理する（前提・制約・評価指標）</div>
-                      <div class="tMeta">
-                        <span>⏱ 2:30</span><span>🧠 生成AIで要約</span><span>📌 ゴール定義</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="taskRight">
-                    <div class="xp">50 Exp</div>
-                    <button class="btn btnOrange" type="button" onclick="alert('プロトタイプ：動画視聴は未実装です');">Videoを視聴する</button>
-                  </div>
-                </div>
-
+                <!-- 変更点2：Video 1 のカードは削除（Reportのみ残す） -->
                 <div class="taskRow">
                   <div class="taskLeft">
                     <span class="tType">Report</span>
@@ -792,6 +811,23 @@
             </div>
           </div>
         </section>
+
+        <!-- right/sidebar（進捗率カードのみ残す：緑で囲った部分は不要） -->
+        <aside class="sideStack">
+          <div class="card pad">
+            <div class="sideTitle">Quest 進捗率</div>
+            <div class="ring" id="ring">
+              <div class="ringInner">
+                <div style="font-size:22px;">🚀</div>
+                <div class="pct" id="pct">0%</div>
+                <div class="sub">クリア！</div>
+              </div>
+            </div>
+            <div style="text-align:center;color:var(--muted);font-weight:900;font-size:12px;">
+              0%（プロトタイプ）
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   </main>
