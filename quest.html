@@ -138,9 +138,7 @@
       display:grid;place-items:center;
       font-weight:900;
     }
-    .dropdown{
-      position:relative;
-    }
+    .dropdown{ position:relative; }
     .menu{
       position:absolute;
       right:0;
@@ -215,16 +213,9 @@
       border:1px solid rgba(255,255,255,.14);
       white-space:nowrap;
     }
-    .stars{
-      display:inline-flex;
-      gap:2px;
-      transform:translateY(1px);
-    }
-    .star{
-      width:14px;height:14px;
-      fill:#fbbf24;
-      opacity:.95;
-    }
+    .stars{ display:inline-flex; gap:2px; transform:translateY(1px); }
+    .star{ width:14px;height:14px; fill:#fbbf24; opacity:.95; }
+
     .heroCard{
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
@@ -251,14 +242,9 @@
       transform:rotate(12deg);
     }
     .cert svg{ position:relative; z-index:1; opacity:.95; }
-    .certText{
-      text-align:center;
-      font-weight:900;
-      font-size:12px;
-      opacity:.95;
-    }
+    .certText{ text-align:center; font-weight:900; font-size:12px; opacity:.95; }
 
-    /* hero内「こちら」リンクをボタン風に */
+    /* hero内リンク（ボタン風） */
     .linkBtn{
       display:inline-flex;
       align-items:center;
@@ -273,26 +259,24 @@
     }
     .linkBtn:hover{ background:rgba(255,255,255,.22); }
 
-    /* 白背景上のリンクボタン（Mission内など） */
+    /* 白背景用のリンクボタン（Mission内など） */
     .linkBtnLight{
       display:inline-flex;
       align-items:center;
       gap:6px;
-      padding:4px 10px;
+      padding:3px 10px;
       border-radius:999px;
       text-decoration:none;
       font-weight:900;
-      background:#fff7ed;
-      border:1px solid #fed7aa;
-      color:#9a3412;
-      vertical-align:baseline;
+      background:#f3f4f6;
+      border:1px solid var(--border);
+      color:var(--text);
+      transform: translateY(-1px);
     }
-    .linkBtnLight:hover{ filter:brightness(.98); }
+    .linkBtnLight:hover{ background:#e5e7eb; }
 
     /* ===== Main ===== */
-    .main{
-      padding:18px 0 60px;
-    }
+    .main{ padding:18px 0 60px; }
     .tabs{
       display:flex;
       gap:8px;
@@ -335,10 +319,7 @@
       justify-content:space-between;
       gap:12px;
     }
-    .introTitle{
-      font-weight:900;
-      font-size:14px;
-    }
+    .introTitle{ font-weight:900; font-size:14px; }
     .introDesc{
       margin-top:6px;
       color:var(--muted);
@@ -390,10 +371,9 @@
       min-width:0;
     }
     .mTitle span:last-child{
-      min-width:0;
+      white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      white-space:nowrap;
     }
     .mBadge{
       font-size:12px;
@@ -419,19 +399,20 @@
       opacity:.8;
     }
     .mission[data-open="false"] .chev{ transform:rotate(-90deg); }
-    .mBody{
-      padding:0 12px 12px;
-      display:block;
-    }
+    .mBody{ padding:0 12px 12px; display:block; }
     .mission[data-open="false"] .mBody{ display:none; }
 
-    /* Mission内の説明文（introDesc と同様の扱い） */
-    .mDesc{
+    /* Mission内の説明文（緑枠の位置に入れるテキスト用） */
+    .missionNote{
       margin-top:10px;
+      padding:10px 10px;
+      border-radius:12px;
+      background:#f9fafb;
+      border:1px solid var(--border);
       color:var(--muted);
       font-weight:800;
       font-size:12px;
-      line-height:1.7;
+      line-height:1.75;
     }
 
     .taskRow{
@@ -549,7 +530,6 @@
     .ringInner .pct{ font-size:18px; color:#111827; }
     .ringInner .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
 
-    /* Footer hint */
     .hintBar{
       margin-top:12px;
       color:var(--muted);
@@ -664,12 +644,12 @@
           <p class="heroSub">
             ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
             ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
-            （案２）まずは
+            （案２）こちら
             <a class="linkBtn"
                href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
                target="_blank"
                rel="noopener noreferrer">
-              こちら
+              AIロールプレイ機能
             </a>
             にアクセスし、各登場人物にインタビューをしましょう。<br>
             （※プロトタイプ：実データや提出は未接続です）
@@ -716,13 +696,18 @@
               </div>
             </div>
 
-            <!-- デモ用_はじめに（ダウンロードとMission1の間） -->
+            <!-- デモ用_はじめに -->
             <div class="card pad" style="margin-bottom:12px;">
               <div class="introTop">
                 <div>
                   <div class="introTitle">デモ用_はじめに</div>
                   <div class="introDesc">
-                    プログラムの進め方や重要ポイントを動画化したものを掲載する。受講生が直感的に内容を把握できる仕組みを構築することで、初学者の学習ハードルを低減できるかを検証する。
+                    まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
+                    <a class="linkBtnLight"
+                       href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
+                       target="_blank"
+                       rel="noopener noreferrer">AIロールプレイ機能</a>
+                    にアクセスし、各登場人物にインタビューをしましょう。
                   </div>
                 </div>
                 <div class="introXp">50 Exp</div>
@@ -734,7 +719,7 @@
               </div>
             </div>
 
-            <!-- Mission 1 -->
+            <!-- Mission 1（Video1カードはナシ） -->
             <div class="mission" data-open="true">
               <div class="mHead" role="button" tabindex="0" aria-expanded="true">
                 <div class="mTitle">
@@ -750,8 +735,8 @@
               </div>
 
               <div class="mBody">
-                <!-- ★緑枠の箇所に表示したい文言（カード化せず introDesc と同様のテキスト扱い） -->
-                <div class="mDesc">
+                <!-- 緑枠位置の説明文（カードではなく説明ブロック） -->
+                <div class="missionNote">
                   まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
                   <a class="linkBtnLight"
                      href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
@@ -760,19 +745,22 @@
                   にアクセスし、各登場人物にインタビューをしましょう。
                 </div>
 
-                <!-- 変更点２：Video1のカードはナシ（Reportのみ残す） -->
+                <!-- Reportのみ（ボタン：課題提出 / 遷移） -->
                 <div class="taskRow">
                   <div class="taskLeft">
                     <span class="tType">Report</span>
                     <div style="min-width:0;">
-                      <div class="tTitle">会話のログを投稿しよう</div>
+                      <div class="tTitle">仮説と確認観点をまとめる（AI下書き→人が修正）</div>
                       <div class="tMeta">
+                        <span>📝 提出形式</span><span>✅ 観点チェック</span><span>✨ 文章整形</span>
                       </div>
                     </div>
                   </div>
                   <div class="taskRight">
                     <div class="xp">50 Exp</div>
-                    <button class="btn btnGhost" type="button" onclick="alert('プロトタイプ：提出は未実装です');">レポートを開く</button>
+                    <button class="btn btnGhost" type="button" onclick="location.href='./report_submit.html';">
+                      課題提出
+                    </button>
                   </div>
                 </div>
               </div>
@@ -860,9 +848,8 @@
           </div>
         </section>
 
-        <!-- right/sidebar -->
+        <!-- right/sidebar（進捗率だけ残す） -->
         <aside class="sideStack">
-          <!-- ★緑で囲った部分（相談室/ナビ）は削除：進捗率のみ残す -->
           <div class="card pad">
             <div class="sideTitle">Quest 進捗率</div>
             <div class="ring" id="ring">
