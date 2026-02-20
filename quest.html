@@ -273,7 +273,7 @@
     }
     .linkBtn:hover{ background:rgba(255,255,255,.22); }
 
-    /* 白背景用（Mission内など）のリンクボタン */
+    /* 白背景上のリンクボタン（Mission内など） */
     .linkBtnLight{
       display:inline-flex;
       align-items:center;
@@ -282,12 +282,12 @@
       border-radius:999px;
       text-decoration:none;
       font-weight:900;
-      background:#f9fafb;
-      border:1px solid var(--border);
-      color:var(--text);
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
       vertical-align:baseline;
     }
-    .linkBtnLight:hover{ background:#f3f4f6; }
+    .linkBtnLight:hover{ filter:brightness(.98); }
 
     /* ===== Main ===== */
     .main{
@@ -387,6 +387,13 @@
       align-items:center;
       gap:10px;
       font-weight:900;
+      min-width:0;
+    }
+    .mTitle span:last-child{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
     .mBadge{
       font-size:12px;
@@ -418,14 +425,10 @@
     }
     .mission[data-open="false"] .mBody{ display:none; }
 
-    /* Mission内の説明文（緑枠の箇所に入れたい文） */
-    .mNote{
+    /* Mission内の説明文（introDesc と同様の扱い） */
+    .mDesc{
       margin-top:10px;
-      padding:10px 10px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#f9fafb;
-      color:var(--text);
+      color:var(--muted);
       font-weight:800;
       font-size:12px;
       line-height:1.7;
@@ -747,8 +750,8 @@
               </div>
 
               <div class="mBody">
-                <!-- ★緑枠に入れたい文言 -->
-                <div class="mNote">
+                <!-- ★緑枠の箇所に表示したい文言（カード化せず introDesc と同様のテキスト扱い） -->
+                <div class="mDesc">
                   まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
                   <a class="linkBtnLight"
                      href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
@@ -757,7 +760,7 @@
                   にアクセスし、各登場人物にインタビューをしましょう。
                 </div>
 
-                <!-- 変更点２：Video1カードはナシ（Reportのみ） -->
+                <!-- 変更点２：Video1のカードはナシ（Reportのみ残す） -->
                 <div class="taskRow">
                   <div class="taskLeft">
                     <span class="tType">Report</span>
@@ -858,8 +861,9 @@
           </div>
         </section>
 
-        <!-- right/sidebar（緑枠部分は不要 → 進捗率のみ残す） -->
+        <!-- right/sidebar -->
         <aside class="sideStack">
+          <!-- ★緑で囲った部分（相談室/ナビ）は削除：進捗率のみ残す -->
           <div class="card pad">
             <div class="sideTitle">Quest 進捗率</div>
             <div class="ring" id="ring">
