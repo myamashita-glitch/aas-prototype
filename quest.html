@@ -21,7 +21,6 @@
       --orangeHover:#e88736;
 
       --blue:#2563eb;
-      --blue2:#1d4ed8;
 
       --radius:12px;
       --radius2:16px;
@@ -402,17 +401,17 @@
     .mBody{ padding:0 12px 12px; display:block; }
     .mission[data-open="false"] .mBody{ display:none; }
 
-    /* Mission内の説明文（緑枠の位置に入れるテキスト用） */
+    /* Mission内の説明文（カードにしない：introDescと同じ見え方） */
     .missionNote{
       margin-top:10px;
-      padding:10px 10px;
-      border-radius:12px;
-      background:#f9fafb;
-      border:1px solid var(--border);
       color:var(--muted);
       font-weight:800;
       font-size:12px;
-      line-height:1.75;
+      line-height:1.7;
+      padding:0;           /* 枠っぽさをなくす */
+      border:none;
+      background:transparent;
+      border-radius:0;
     }
 
     .taskRow{
@@ -702,12 +701,7 @@
                 <div>
                   <div class="introTitle">デモ用_はじめに</div>
                   <div class="introDesc">
-                    まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
-                    <a class="linkBtnLight"
-                       href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
-                       target="_blank"
-                       rel="noopener noreferrer">AIロールプレイ機能</a>
-                    にアクセスし、各登場人物にインタビューをしましょう。
+                    プログラムの進め方や重要ポイントを動画化したものを掲載する。受講生が直感的に内容を把握できる仕組みを構築することで、初学者の学習ハードルを低減できるかを検証する。
                   </div>
                 </div>
                 <div class="introXp">50 Exp</div>
@@ -735,7 +729,7 @@
               </div>
 
               <div class="mBody">
-                <!-- 緑枠位置の説明文（カードではなく説明ブロック） -->
+                <!-- カードにしない説明文（introDescと同じ見え方） -->
                 <div class="missionNote">
                   まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
                   <a class="linkBtnLight"
@@ -745,15 +739,13 @@
                   にアクセスし、各登場人物にインタビューをしましょう。
                 </div>
 
-                <!-- Reportのみ（ボタン：課題提出 / 遷移） -->
+                <!-- Reportのみ（メタ3種は削除） -->
                 <div class="taskRow">
                   <div class="taskLeft">
                     <span class="tType">Report</span>
                     <div style="min-width:0;">
                       <div class="tTitle">仮説と確認観点をまとめる（AI下書き→人が修正）</div>
-                      <div class="tMeta">
-                        <span>📝 提出形式</span><span>✅ 観点チェック</span><span>✨ 文章整形</span>
-                      </div>
+                      <!-- tMeta削除 -->
                     </div>
                   </div>
                   <div class="taskRight">
