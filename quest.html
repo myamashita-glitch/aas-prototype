@@ -1,3 +1,4 @@
+<!-- quest.html -->
 <!doctype html>
 <html lang="ja">
 <head>
@@ -21,6 +22,7 @@
       --orangeHover:#e88736;
 
       --blue:#2563eb;
+      --blue2:#1d4ed8;
 
       --radius:12px;
       --radius2:16px;
@@ -214,7 +216,6 @@
     }
     .stars{ display:inline-flex; gap:2px; transform:translateY(1px); }
     .star{ width:14px;height:14px; fill:#fbbf24; opacity:.95; }
-
     .heroCard{
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.14);
@@ -243,7 +244,7 @@
     .cert svg{ position:relative; z-index:1; opacity:.95; }
     .certText{ text-align:center; font-weight:900; font-size:12px; opacity:.95; }
 
-    /* hero内リンク（ボタン風） */
+    /* hero内「こちら」リンクをボタン風に */
     .linkBtn{
       display:inline-flex;
       align-items:center;
@@ -258,8 +259,8 @@
     }
     .linkBtn:hover{ background:rgba(255,255,255,.22); }
 
-    /* 白背景用のリンクボタン（Mission内など） */
-    .linkBtnLight{
+    /* 白背景用（Mission内）のリンクボタン */
+    .linkPill{
       display:inline-flex;
       align-items:center;
       gap:6px;
@@ -267,12 +268,12 @@
       border-radius:999px;
       text-decoration:none;
       font-weight:900;
-      background:#f3f4f6;
+      background:#fff;
       border:1px solid var(--border);
-      color:var(--text);
+      color:var(--blue2);
       transform: translateY(-1px);
     }
-    .linkBtnLight:hover{ background:#e5e7eb; }
+    .linkPill:hover{ background:#f3f4f6; }
 
     /* ===== Main ===== */
     .main{ padding:18px 0 60px; }
@@ -333,16 +334,8 @@
       white-space:nowrap;
       padding-top:2px;
     }
-    .introAction{
-      display:flex;
-      justify-content:center;
-      margin-top:12px;
-    }
-    .btnWide{
-      min-width:240px;
-      height:38px;
-      border-radius:10px;
-    }
+    .introAction{ display:flex; justify-content:center; margin-top:12px; }
+    .btnWide{ min-width:240px; height:38px; border-radius:10px; }
 
     /* Missions */
     .mission{
@@ -367,12 +360,6 @@
       align-items:center;
       gap:10px;
       font-weight:900;
-      min-width:0;
-    }
-    .mTitle span:last-child{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
     .mBadge{
       font-size:12px;
@@ -398,20 +385,20 @@
       opacity:.8;
     }
     .mission[data-open="false"] .chev{ transform:rotate(-90deg); }
-    .mBody{ padding:0 12px 12px; display:block; }
+    .mBody{
+      padding:0 12px 12px;
+      display:block;
+    }
     .mission[data-open="false"] .mBody{ display:none; }
 
-    /* Mission内の説明文（カードにしない：introDescと同じ見え方） */
-    .missionNote{
-      margin-top:10px;
+    /* Mission内の説明文（カードにせず、introDesc相当の見え方） */
+    .mNote{
+      margin-top:8px;
       color:var(--muted);
       font-weight:800;
       font-size:12px;
       line-height:1.7;
-      padding:0;           /* 枠っぽさをなくす */
-      border:none;
-      background:transparent;
-      border-radius:0;
+      padding:0 2px;
     }
 
     .taskRow{
@@ -449,15 +436,6 @@
       overflow:hidden;
       text-overflow:ellipsis;
       max-width:680px;
-    }
-    .tMeta{
-      display:flex;
-      gap:10px;
-      color:var(--muted);
-      font-weight:800;
-      font-size:12px;
-      margin-top:4px;
-      flex-wrap:wrap;
     }
     .taskRight{
       display:flex;
@@ -529,6 +507,7 @@
     .ringInner .pct{ font-size:18px; color:#111827; }
     .ringInner .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
 
+    /* Footer hint */
     .hintBar{
       margin-top:12px;
       color:var(--muted);
@@ -643,12 +622,12 @@
           <p class="heroSub">
             ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
             ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。ここにケースの説明が入る。<br>
-            （案２）こちら
+            （案２）まずは
             <a class="linkBtn"
                href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
                target="_blank"
                rel="noopener noreferrer">
-              AIロールプレイ機能
+              こちら
             </a>
             にアクセスし、各登場人物にインタビューをしましょう。<br>
             （※プロトタイプ：実データや提出は未接続です）
@@ -695,7 +674,7 @@
               </div>
             </div>
 
-            <!-- デモ用_はじめに -->
+            <!-- デモ用_はじめに（ダウンロードとMission1の間） -->
             <div class="card pad" style="margin-bottom:12px;">
               <div class="introTop">
                 <div>
@@ -713,7 +692,7 @@
               </div>
             </div>
 
-            <!-- Mission 1（Video1カードはナシ） -->
+            <!-- Mission 1 -->
             <div class="mission" data-open="true">
               <div class="mHead" role="button" tabindex="0" aria-expanded="true">
                 <div class="mTitle">
@@ -729,28 +708,29 @@
               </div>
 
               <div class="mBody">
-                <!-- カードにしない説明文（introDescと同じ見え方） -->
-                <div class="missionNote">
+                <!-- カードにせず、説明文として表示 -->
+                <div class="mNote">
                   まずは本編のStory1-4に目を通してください。主人公の状況を確認してから
-                  <a class="linkBtnLight"
+                  <a class="linkPill"
                      href="https://gqr7ajqmfy.ap-northeast-1.awsapprunner.com"
                      target="_blank"
                      rel="noopener noreferrer">AIロールプレイ機能</a>
                   にアクセスし、各登場人物にインタビューをしましょう。
                 </div>
 
-                <!-- Reportのみ（メタ3種は削除） -->
+                <!-- Video1のカードはナシ -->
+
+                <!-- Report（メタの3つも削除 / ボタン名変更＆遷移） -->
                 <div class="taskRow">
                   <div class="taskLeft">
                     <span class="tType">Report</span>
                     <div style="min-width:0;">
                       <div class="tTitle">仮説と確認観点をまとめる（AI下書き→人が修正）</div>
-                      <!-- tMeta削除 -->
                     </div>
                   </div>
                   <div class="taskRight">
                     <div class="xp">50 Exp</div>
-                    <button class="btn btnGhost" type="button" onclick="location.href='./report_submit.html';">
+                    <button class="btn btnGhost" type="button" onclick="location.href='./report_submit.html'">
                       課題提出
                     </button>
                   </div>
@@ -758,7 +738,7 @@
               </div>
             </div>
 
-            <!-- Mission 2 -->
+            <!-- Mission 2（そのまま） -->
             <div class="mission" data-open="true">
               <div class="mHead" role="button" tabindex="0" aria-expanded="true">
                 <div class="mTitle">
@@ -779,7 +759,7 @@
                     <span class="tType">Video 2</span>
                     <div style="min-width:0;">
                       <div class="tTitle">Excelで最初に確認すべきポイント（欠損・外れ値・分布）</div>
-                      <div class="tMeta">
+                      <div style="display:flex;gap:10px;color:var(--muted);font-weight:800;font-size:12px;margin-top:4px;flex-wrap:wrap;">
                         <span>⏱ 3:10</span><span>📊 基本集計</span><span>⚠️ 落とし穴</span>
                       </div>
                     </div>
@@ -795,7 +775,7 @@
                     <span class="tType">Video 3</span>
                     <div style="min-width:0;">
                       <div class="tTitle">生成AIで“要約→示唆→次の一手”を作る</div>
-                      <div class="tMeta">
+                      <div style="display:flex;gap:10px;color:var(--muted);font-weight:800;font-size:12px;margin-top:4px;flex-wrap:wrap;">
                         <span>⏱ 3:55</span><span>🧾 要約</span><span>💡 示唆</span>
                       </div>
                     </div>
@@ -811,7 +791,7 @@
                     <span class="tType">まとめ</span>
                     <div style="min-width:0;">
                       <div class="tTitle">デモ用まとめ（復習＋次の学習導線）</div>
-                      <div class="tMeta">
+                      <div style="display:flex;gap:10px;color:var(--muted);font-weight:800;font-size:12px;margin-top:4px;flex-wrap:wrap;">
                         <span>🎯 次のおすすめ</span><span>🔁 復習</span>
                       </div>
                     </div>
@@ -840,7 +820,7 @@
           </div>
         </section>
 
-        <!-- right/sidebar（進捗率だけ残す） -->
+        <!-- right/sidebar（進捗のみ残す：緑枠の aicnAI/ナビゲーションは削除） -->
         <aside class="sideStack">
           <div class="card pad">
             <div class="sideTitle">Quest 進捗率</div>
